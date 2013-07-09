@@ -46,7 +46,9 @@ public class ViewApk implements Parcelable {
 	private String minGlEs = "0";
 	private String repoName = "Aptoide";
 	private double price = 0;
+
     private boolean isPaid;
+
     private String webservicesPath;
     private int likes;
     private int dislikes;

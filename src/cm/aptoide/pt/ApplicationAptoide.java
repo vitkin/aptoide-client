@@ -41,6 +41,7 @@ import cm.aptoide.com.nostra13.universalimageloader.core.assist.FlushedInputStre
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
 import cm.aptoide.pt.preferences.ManagerPreferences;
+import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.NetworkUtils;
 import org.acra.ACRA;
@@ -135,7 +136,7 @@ public class ApplicationAptoide extends Application {
 		ACRA.init(this);
 //
 
-
+        startService(new Intent(this, ServiceManagerDownload.class));
 
 		AptoideThemePicker.setAptoideTheme(this);
 		setContext(getApplicationContext());

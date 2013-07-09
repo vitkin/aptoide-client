@@ -16,6 +16,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.views.*;
@@ -1232,7 +1233,7 @@ public class Database {
 	 * @param values
 	 */
 	private void putCommonValues(ViewApk apk, ContentValues values) {
-		values.put(DbStructure.COLUMN_NAME, apk.getName());
+		values.put(DbStructure.COLUMN_NAME, Html.fromHtml(apk.getName()).toString());
 		values.put(DbStructure.COLUMN_VERNAME, apk.getVername());
 		values.put(DbStructure.COLUMN_APKID, apk.getApkid());
 		values.put(DbStructure.COLUMN_MD5, apk.getMd5());

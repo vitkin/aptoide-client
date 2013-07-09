@@ -279,6 +279,16 @@
                     android:host="market.android.com"
                     android:scheme="https" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                        android:host="play.google.com"
+                        android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <service android:name=".services.MainService" />
@@ -286,6 +296,8 @@
             android:name=".ExtrasService"
             android:process=":ExtrasService" />
         <service android:name=".services.ServiceDownloadManager" />
+        <service android:name=".services.ServiceManagerDownload" />
+
 
         <receiver android:name=".InstalledBroadcastReceiver" >
             <intent-filter>

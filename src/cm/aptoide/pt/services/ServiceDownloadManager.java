@@ -19,7 +19,6 @@
 */
 package cm.aptoide.pt.services;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -45,6 +44,7 @@ import cm.aptoide.pt.views.*;
 import java.io.*;
 import java.lang.Process;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -291,8 +291,7 @@ public class ServiceDownloadManager extends Service {
 
 	private synchronized void setNotification() {
 
-		managerNotification =
-		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		managerNotification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mBuilder = new NotificationCompat.Builder(this);
 
 		Intent onClick = new Intent();
@@ -480,10 +479,12 @@ public class ServiceDownloadManager extends Service {
 		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());
 		globaDownloadStatus.setProgress(0);
 		globaDownloadStatus.setSpeedInKBps(0);
-		for (ViewDownloadManagement download : ongoingDownloads.values()) {
-			globaDownloadStatus.incrementProgress(download.getProgress());
-			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
-		}
+
+        for(Iterator<ViewDownloadManagement> i = ongoingDownloads.values().iterator();i.hasNext();){
+            ViewDownloadManagement download = i.next();
+            globaDownloadStatus.incrementProgress(download.getProgress());
+            globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
+        }
 		if(ongoingDownloads.size() > 0){
 //			if(!keepScreenOn.isHeld()){
 //				keepScreenOn.acquire();
@@ -638,14 +639,14 @@ public class ServiceDownloadManager extends Service {
                 os.flush();
 
                 String currUid = osRes.readLine();
-                boolean exitSu = false;
+                boolean exitSu;
                 if (null == currUid)
                 {
                     retval = false;
                     exitSu = false;
                     Log.d("ROOT", "Can't get root access or denied by user");
                 }
-                else if (true == currUid.contains("uid=0"))
+                else if (currUid.contains("uid=0"))
                 {
                     retval = true;
                     exitSu = true;

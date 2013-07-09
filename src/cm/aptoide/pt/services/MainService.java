@@ -7,18 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt.services;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-
-import org.json.JSONObject;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,22 +20,18 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
-import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.Category;
-import cm.aptoide.pt.Database;
-import cm.aptoide.pt.DbStructure;
-import cm.aptoide.pt.ExtrasService;
-import cm.aptoide.pt.MainActivity;
-import cm.aptoide.pt.Order;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.RepoParser;
-import cm.aptoide.pt.Server;
+import cm.aptoide.pt.*;
 import cm.aptoide.pt.Server.State;
-import cm.aptoide.pt.ServerLatest;
-import cm.aptoide.pt.ServerTop;
 import cm.aptoide.pt.exceptions.AptoideException;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class MainService extends Service {
 //	Database db;
@@ -533,11 +517,11 @@ public class MainService extends Service {
 	                         count / Math.pow(1000, exp),
 	                         "kMGTPE".charAt(exp-1));
 	}
-	
+
 	public void clearUpdatesList(){
 		updatesList.clear();
 	}
-	
+
 	public void cancelUpdatesNotification(){
 		if (Context.NOTIFICATION_SERVICE!=null) {
 	        String ns = Context.NOTIFICATION_SERVICE;
@@ -545,10 +529,10 @@ public class MainService extends Service {
 	        nMgr.cancel(ID_UPDATES_NOTIFICATION);
 	    }
 	}
-	
+
 	public void setUpdatesNotification(Cursor updates) {
 		boolean isNotification = false;
-		
+
 		if(!updates.isClosed()){
 			for(updates.moveToFirst(); !updates.isAfterLast(); updates.moveToNext()){
 				String updateApkid = updates.getString(updates.getColumnIndex(DbStructure.COLUMN_APKID));
@@ -558,11 +542,11 @@ public class MainService extends Service {
 				}
 
 			}
-		
+
 		}
-		
+
 		if(isNotification){
-			
+
 			NotificationManager managerNotification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			int icon = android.R.drawable.stat_sys_download_done;
 			if(ApplicationAptoide.MARKETNAME.equals("Aptoide")){
@@ -572,7 +556,7 @@ public class MainService extends Service {
 			long when = System.currentTimeMillis();
 
 			Notification notification = new Notification(icon, tickerText, when);
-			
+
 			Context context = getApplicationContext();
 			CharSequence contentTitle = ApplicationAptoide.MARKETNAME;
 			CharSequence contentText = getString(R.string.new_updates, updates.getCount()+"");
@@ -581,13 +565,13 @@ public class MainService extends Service {
 			}
 			Intent notificationIntent = new Intent(context, MainActivity.class);
 			notificationIntent.putExtra("new_updates", true);
-			
+
 			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 			notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-			
+
 			managerNotification.notify(ID_UPDATES_NOTIFICATION, notification);
-			
-			
+
+
 			Log.d("Aptoide-MainActivity","Set updates notification");
 		}
 	}

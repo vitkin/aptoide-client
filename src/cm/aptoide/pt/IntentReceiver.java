@@ -16,15 +16,13 @@ import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
-import cm.aptoide.pt.services.ServiceDownloadManager;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.services.ServiceManagerDownload;
+import cm.aptoide.pt.views.ViewApk;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -53,7 +51,7 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 
 	private boolean isRunning = false;
 
-	private AIDLServiceDownloadManager serviceDownloadManager = null;
+	private ServiceManagerDownload serviceDownloadManager = null;
 
 	private boolean serviceManagerIsBound = false;
 
@@ -63,7 +61,7 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 			// established, giving us the object we can use to
 			// interact with the service.  We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
-			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceDownloadManager = ((ServiceManagerDownload.LocalBinder)service).getService();
 			serviceManagerIsBound = true;
 
 			Log.v("Aptoide-IntentReceiver", "Connected to ServiceDownloadManager");
@@ -92,7 +90,7 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 				isRunning = true;
 
 				if(!serviceManagerIsBound){
-		    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+		    		bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
 		    	}
 
 			}
@@ -141,8 +139,11 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 		}else if(uri.startsWith("http://market.android.com/details?id=")){
 			String param = uri.split("=")[1];
 			startMarketIntent(param);
-		}else{
-			if(ApplicationAptoide.SEARCHSTORES){	
+        }else if(uri.startsWith("https://play.google.com/store/apps/details?id=")){
+            String param = uri.split("=")[1];
+            startMarketIntent(param);
+        }else{
+			if(ApplicationAptoide.SEARCHSTORES){
 				try{
 					System.out.println(getIntent().getDataString());
 					downloadMyappFile(getIntent().getDataString());
@@ -168,28 +169,17 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 								apk.setVercode(0);
 								apk.setVername("");
 								apk.generateAppHashid();
-								ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
 
-								ViewCacheObb mainObbCache = null;
-								if(app.get("main_path")!=null){
-									mainObbCache = new ViewCacheObb((apk.getApkid()+".obb"+"|"+apk.getVercode()).hashCode(),app.get("main_filename"), app.get("main_md5sum"), cache, apk.getApkid());
-								}
+                                apk.setMainObbUrl(app.get("main_path"));
+                                apk.setMainObbFileName(app.get("main_filename"));
+                                apk.setMainObbMd5(app.get("main_md5sum"));
 
-								ViewCacheObb patchObbCache = null;
-								if(app.get("patch_path")!=null){
-									patchObbCache = new ViewCacheObb((apk.getApkid()+".obb2"+"|"+apk.getVercode()).hashCode(),app.get("patch_filename"),  app.get("patch_md5sum"), cache, apk.getApkid());
-								}
-								ViewObb obb = null;
+                                apk.setPatchObbUrl(app.get("patch_path"));
+                                apk.setPatchObbFileName(app.get("patch_filename"));
+                                apk.setPatchObbMd5(app.get("patch_md5sum"));
 
-								if(mainObbCache!=null){
-									obb = new ViewObb(app.get("main_path"), app.get("patch_path"), mainObbCache, patchObbCache);
-								}
+								serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk),apk);
 
-								try {
-									serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),""), obb));
-								} catch (RemoteException e) {
-									e.printStackTrace();
-								}
 							}
 						});
 						installAppDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), neutralListener);

@@ -10,107 +10,114 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/exit"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical" >
 
-        <LinearLayout
-            android:id="@+id/downloading_apps"
+    <ListView
+            android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            />
 
-            <TextView
-                android:id="@+id/downloading_intro"
-                style="?attr/labelBackground"
-                android:text="@string/downloading_apps" />
+    <!--<LinearLayout-->
+        <!--android:id="@+id/linearLayout1"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:layout_above="@+id/exit"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:orientation="vertical" >-->
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp" >
+        <!--<LinearLayout-->
+            <!--android:id="@+id/downloading_apps"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="vertical" >-->
 
-                <ListView
-                    android:id="@+id/downloading_list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/custom_inside_background_color" />
-            </LinearLayout>
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/downloading_intro"-->
+                <!--style="?attr/labelBackground"-->
+                <!--android:text="@string/downloading_apps" />-->
 
-        <LinearLayout
-            android:id="@+id/downloaded_apps"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            <!--<LinearLayout-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:padding="5dp" >-->
 
-            <TextView
-                android:id="@+id/downloaded_intro"
-                style="?attr/labelBackground"
-                android:text="@string/downloaded_apps" />
+                <!--<ListView-->
+                    <!--android:id="@android:id/list"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="?attr/custom_inside_background_color" />-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp" >
+        <!--<LinearLayout-->
+            <!--android:id="@+id/downloaded_apps"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="vertical" >-->
 
-                <ListView
-                    android:id="@+id/downloaded_list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/custom_inside_background_color" />
-            </LinearLayout>
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/downloaded_intro"-->
+                <!--style="?attr/labelBackground"-->
+                <!--android:text="@string/downloaded_apps" />-->
 
-        <LinearLayout
-            android:id="@+id/failed_apps"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
+            <!--<LinearLayout-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:padding="5dp" >-->
 
-            <TextView
-                android:id="@+id/failed_intro"
-                style="?attr/labelBackground"
-                android:text="@string/not_downloaded_apps" />
+                <!--<ListView-->
+                    <!--android:id="@+id/downloaded_list"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="?attr/custom_inside_background_color" />-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="5dp" >
+        <!--<LinearLayout-->
+            <!--android:id="@+id/failed_apps"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:orientation="vertical" >-->
 
-                <ListView
-                    android:id="@+id/failed_list"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:background="?attr/custom_inside_background_color" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/failed_intro"-->
+                <!--style="?attr/labelBackground"-->
+                <!--android:text="@string/not_downloaded_apps" />-->
 
-    <TextView
-        android:id="@+id/no_downloads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="5dp"
-        android:text="@string/no_downloads"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+            <!--<LinearLayout-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:padding="5dp" >-->
 
-    <Button
-        android:id="@+id/exit"
-        style="@style/gray_button_style"
-        android:layout_alignParentBottom="true"
-        android:text="@string/back" />
+                <!--<ListView-->
+                    <!--android:id="@+id/failed_list"-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="?attr/custom_inside_background_color" />-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/no_downloads"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:text="@string/no_downloads"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/exit"-->
+        <!--style="@style/gray_button_style"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:text="@string/back" />-->
 
 </RelativeLayout><!--
  * Copyright (C) 2012  Duarte Silveira
@@ -125,7 +132,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.

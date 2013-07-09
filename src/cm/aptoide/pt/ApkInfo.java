@@ -42,8 +42,11 @@ import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDis
 import cm.aptoide.pt.adapters.ImageGalleryAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
-import cm.aptoide.pt.services.ServiceDownloadManager;
+import cm.aptoide.pt.download.DownloadInfo;
+import cm.aptoide.pt.download.Utils;
+import cm.aptoide.pt.download.state.EnumState;
+import cm.aptoide.pt.events.BusProvider;
+import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
@@ -59,15 +62,10 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
+import com.mopub.mobileads.MoPubView;
+import com.squareup.otto.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.mopub.mobileads.MoPubView;
-
-
-
-
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,7 +87,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
     Activity context;
     boolean spinnerInstanciated = false;
     CheckBox scheduledDownloadChBox;
-    private ViewDownloadManagement download;
+    private DownloadInfo download;
 
     private Gallery gallery;
     private ArrayList<String> imageUrls;
@@ -97,7 +95,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
     private boolean isRunning = false;
 
-    private AIDLServiceDownloadManager serviceDownloadManager = null;
+    private ServiceManagerDownload serviceDownloadManager = null;
 
     private boolean serviceManagerIsBound = false;
 
@@ -107,7 +105,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             // established, giving us the object we can use to
             // interact with the service.  We are communicating with the
             // service using AIDL, so here we set the remote service interface.
-            serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+            serviceDownloadManager = ((ServiceManagerDownload.LocalBinder)service).getService();
             serviceManagerIsBound = true;
 
             Log.v("Aptoide-ApkInfo", "Connected to ServiceDownloadManager");
@@ -125,16 +123,16 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         }
     };
 
-    private AIDLDownloadObserver.Stub serviceDownloadManagerCallback = new AIDLDownloadObserver.Stub() {
-        @Override
-        public void updateDownloadStatus(ViewDownload update) throws RemoteException {
-//            download.updateProgress(update);
-            if(handler!=null){
-                handler.sendEmptyMessage(download.getDownloadStatus().ordinal());
-            }
-
-        }
-    };
+//    private AIDLDownloadObserver.Stub serviceDownloadManagerCallback = new AIDLDownloadObserver.Stub() {
+//        @Override
+//        public void updateDownloadStatus(ViewDownload update) throws RemoteException {
+////            download.updateProgress(update);
+//            if(handler!=null){
+//                handler.sendEmptyMessage(download.getDownloadStatus().ordinal());
+//            }
+//
+//        }
+//    };
 
     private ViewGroup viewLikes;
     private ViewGroup viewLikesButton;
@@ -162,6 +160,8 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         super.onCreate(arg0);
         setContentView(R.layout.app_info);
 
+        BusProvider.getInstance().register(this);
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
         intentFilter.addDataScheme("package");
@@ -176,7 +176,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             isRunning = true;
 
             if(!serviceManagerIsBound){
-                bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+                bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
             }else{
                 continueLoading();
             }
@@ -222,13 +222,13 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                     if (spinnerInstanciated) {
-                        if(!download.isNull()){
-                            try {
-                                serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }
+//                        if(!download.isNull()){
+//                            try {
+//                                serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
+//                            } catch (RemoteException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
                         loadElements(arg3);
                     } else {
                         spinnerInstanciated = true;
@@ -931,107 +931,109 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
         @Override
         public void onClick(View v) {
-            findViewById(R.id.btinstall).setOnClickListener(null);
-            new Thread(new Runnable() {
-                public void run() {
-                    if (scheduledDownloadChBox.isChecked()) {
-//                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon(), mainObbUrl, mainObbMd5, mainObbName, patchObbUrl, patchObbMd5, patchObbName);
-                        runOnUiThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Toast toast = Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
-                                toast.show();
-                            }
-                        });
-                        findViewById(R.id.btinstall).setOnClickListener(installListener);
-                    } else {
-
-                        ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(), viewApk.getApkid(), viewApk.getVername());
-
-                        ViewCacheObb mainObbCache = null;
-                        if(mainObbUrl!=null){
-                            mainObbCache = new ViewCacheObb((viewApk.getApkid()+".obb"+"|"+viewApk.getVercode()).hashCode(),mainObbName, mainObbMd5, cache, viewApk.getApkid());
-                        }
-
-                        ViewCacheObb patchObbCache = null;
-                        if(patchObbUrl!=null){
-                            patchObbCache = new ViewCacheObb((viewApk.getApkid()+".obb2"+"|"+viewApk.getVercode()).hashCode(),patchObbName, patchObbMd5, cache, viewApk.getApkid());
-                        }
-                        ViewObb obb = null;
-
-                        if(mainObbCache!=null){
-                            obb = new ViewObb(mainObbUrl, patchObbUrl, mainObbCache, patchObbCache);
-                        }
-
-//                        if(mainObbCache!=null && mainObbCache.checkMd5()){
+//            findViewById(R.id.btinstall).setOnClickListener(null);
+            download();
+//            new Thread(new Runnable() {
+//                public void run() {
+//                    if (scheduledDownloadChBox.isChecked()) {
+////                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon(), mainObbUrl, mainObbMd5, mainObbName, patchObbUrl, patchObbMd5, patchObbName);
+//                        runOnUiThread(new Runnable() {
 //
-//                            if(patchObbCache!=null && patchObbCache.checkMd5()){
-//
-//                                if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
-//
-//
-//
-//                                    try {
-//                                        serviceDownloadManager.callInstallApp(cache);
-//                                    } catch (RemoteException e) {
-//                                        e.printStackTrace();
-//                                    }
-//
-//                                }else{
-
-
-                                    download(cache, obb);
-
-//                                }
-//
-//                            }else{
-//
-//                                download(cache, obb);
-//
+//                            @Override
+//                            public void run() {
+//                                Toast toast = Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
+//                                toast.show();
 //                            }
+//                        });
+//                        findViewById(R.id.btinstall).setOnClickListener(installListener);
+//                    } else {
 //
+//                        ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(), viewApk.getApkid(), viewApk.getVername());
 //
-//                        }else{
-//
-//
-//                            if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
-//
-//                                try {
-//                                    serviceDownloadManager.callInstallApp(cache);
-//                                } catch (RemoteException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-//                            } else {
-//
-//                                download(cache, obb);
-//
-//                            }
+//                        ViewCacheObb mainObbCache = null;
+//                        if(mainObbUrl!=null){
+//                            mainObbCache = new ViewCacheObb((viewApk.getApkid()+".obb"+"|"+viewApk.getVercode()).hashCode(),mainObbName, mainObbMd5, cache, viewApk.getApkid());
 //                        }
-                    }
-                }
-            }).start();
+//
+//                        ViewCacheObb patchObbCache = null;
+//                        if(patchObbUrl!=null){
+//                            patchObbCache = new ViewCacheObb((viewApk.getApkid()+".obb2"+"|"+viewApk.getVercode()).hashCode(),patchObbName, patchObbMd5, cache, viewApk.getApkid());
+//                        }
+//                        ViewObb obb = null;
+//
+//                        if(mainObbCache!=null){
+//                            obb = new ViewObb(mainObbUrl, patchObbUrl, mainObbCache, patchObbCache);
+//                        }
+//
+////                        if(mainObbCache!=null && mainObbCache.checkMd5()){
+////
+////                            if(patchObbCache!=null && patchObbCache.checkMd5()){
+////
+////                                if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
+////
+////
+////
+////                                    try {
+////                                        serviceDownloadManager.callInstallApp(cache);
+////                                    } catch (RemoteException e) {
+////                                        e.printStackTrace();
+////                                    }
+////
+////                                }else{
+//
+//
+//                                    download(cache, obb);
+//
+////                                }
+////
+////                            }else{
+////
+////                                download(cache, obb);
+////
+////                            }
+////
+////
+////                        }else{
+////
+////
+////                            if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
+////
+////                                try {
+////                                    serviceDownloadManager.callInstallApp(cache);
+////                                } catch (RemoteException e) {
+////                                    e.printStackTrace();
+////                                }
+////
+////                            } else {
+////
+////                                download(cache, obb);
+////
+////                            }
+////                        }
+//                    }
+//                }
+//            }).start();
 
         }
     };
 
-    private void download(ViewCache cache, ViewObb obb) {
-        if (category.equals(Category.ITEMBASED) || category.equals(Category.TOP) || category.equals(Category.TOPFEATURED) || category.equals(Category.EDITORSCHOICE)) {
+    private void download() {
 
-            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, obb);
+//        if (category.equals(Category.ITEMBASED) || category.equals(Category.TOP) || category.equals(Category.TOPFEATURED) || category.equals(Category.EDITORSCHOICE)) {
+//
+//            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, obb);
+//
+//        } else {
+//
+//            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, db.getServer(viewApk.getRepo_id(), false).getLogin(), obb);
+//
+//        }
 
-        } else {
 
-            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, db.getServer(viewApk.getRepo_id(), false).getLogin(), obb);
-
-        }
-
-
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
+//        runOnUiThread(new Runnable() {
+//
+//            @Override
+//            public void run() {
                 ImageView manage = (ImageView) findViewById(R.id.icon_manage);
 ////                                    manage.setVisibility(View.GONE);
                 manage.setOnClickListener(new OnClickListener() {
@@ -1041,14 +1043,17 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     }
                 });
                 findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+                handleUpdate(download);
+                serviceDownloadManager.startDownload(download, viewApk);
+                findViewById(R.id.btinstall).setOnClickListener(installListener);
+
 //                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
-                findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-            }
-        });
+//                findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
 
-        try {
+//        });
 
-            serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
+//        try {
+
 
 //                                if(mainObbUrl!=null){
 //                                    ViewApk apk = new ViewApk(viewApk.getId(), viewApk.getApkid(), viewApk.getName() + " - MainOBB", 0, "", "0", "0", "", "", viewApk.getRepo_id());
@@ -1057,35 +1062,23 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 //                                }
 //                                serviceDownloadManager.callStartDownload();
 //                                serviceDownloadManager.callStartDownload();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
 
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.btinstall).setOnClickListener(installListener);
-            }
-        });
     }
 
     /**
      *
      */
     private void checkDownloadStatus() {
-        try {
-            download = serviceDownloadManager.callGetAppDownloading(viewApk.hashCode());
-
-
-
-        } catch (RemoteException e1) {
-            e1.printStackTrace();
-        }
-
+        download = serviceDownloadManager.getDownload(viewApk);
+//        handleUpdate(download);
         Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
 
-        if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
+        if(!download.getStatusState().getEnumState().equals(EnumState.ERROR) && !download.getStatusState().getEnumState().equals(EnumState.NOSTATE) && !download.getStatusState().getEnumState().equals(EnumState.COMPLETE)){
+            handleUpdate(download);
             ImageView manage = (ImageView) findViewById(R.id.icon_manage);
 //            manage.setVisibility(View.GONE);
             manage.setOnClickListener(new OnClickListener() {
@@ -1094,21 +1087,18 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     setupQuickActions(view);
                 }
             });
-            try {
-                serviceDownloadManager.callRegisterDownloadObserver(viewApk.hashCode(), serviceDownloadManagerCallback);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
             findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 //            findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
             findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-            ((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
-            ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(this));
+            ((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getPercentDownloaded());
+            ((TextView) findViewById(R.id.speed)).setText(download.getSpeed()+"");
             ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-            ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+            ((TextView) findViewById(R.id.progress)).setText(download.getPercentDownloaded()+"%");
             ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 
         }
+
+
     }
 
 
@@ -1138,75 +1128,86 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
     }
 
 
-    private Handler handler = new Handler(){
+    @Subscribe
+    public void handleUpdate(DownloadInfo download) {
 
-        public void handleMessage(Message msg) {
-            Log.d("Aptoide-ApkInfo", "download status update: "+EnumDownloadStatus.reverseOrdinal(msg.what).name());
-            ProgressBar progress;
-            switch (EnumDownloadStatus.reverseOrdinal(msg.what)) {
-                case PAUSED:
-                    progress = (ProgressBar) findViewById(R.id.downloading_progress);
-                    progress.setIndeterminate(false);
-                    progress.setProgress(download.getProgress());
-                    ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
-                    ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-                    ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-                    ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-                    break;
+        if(download.equals(this.download)){
 
-                case RESUMING:
-                    progress = (ProgressBar) findViewById(R.id.downloading_progress);
-                    progress.setIndeterminate(false);
-                    progress.setProgress(download.getProgress());
-                    ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
-                    ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-                    ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-                    ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-                    break;
+        Log.d("TAG", "UPDATE");
 
-                case DOWNLOADING:
-                    progress = (ProgressBar) findViewById(R.id.downloading_progress);
-                    progress.setIndeterminate(false);
-                    progress.setProgress(download.getProgress());
-                    ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
-                    ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-                    ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-                    ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-                    break;
+//            Log.d("Aptoide-ApkInfo", "download status update: "+EnumDownloadStatus.reverseOrdinal(msg.what).name());
+        ProgressBar progress;
+        switch (download.getStatusState().getEnumState()) {
+            case INACTIVE:
+               progress = (ProgressBar) findViewById(R.id.downloading_progress);
+               progress.setIndeterminate(false);
+               progress.setProgress(download.getPercentDownloaded());
+               ((TextView) findViewById(R.id.speed)).setText(String.format("%.2f", download.getSpeed()/1000) + "KB/s ETA: " + Utils.formatEta(download.getEta()) );
+               ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+//             ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+               ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+               break;
 
-                case FAILED:
-                    Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
-                    if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
-                        new DialogIpBlacklisted(ApkInfo.this).show();
-                    }else{
-                        Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                    findViewById(R.id.download_progress).setVisibility(View.GONE);
-//                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
-                    findViewById(R.id.downloading_name).setVisibility(View.GONE);
-                    findViewById(R.id.btinstall).setOnClickListener(installListener);
-                    break;
+//                case RESUMING:
+//                    progress = (ProgressBar) findViewById(R.id.downloading_progress);
+//                    progress.setIndeterminate(false);
+//                    progress.setProgress(download.getProgress());
+//                    ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
+//                    ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+//                    ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+//                    ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+//                    break;
+            case ACTIVE:
+                progress = (ProgressBar) findViewById(R.id.downloading_progress);
+                progress.setIndeterminate(false);
+                progress.setProgress(download.getPercentDownloaded());
+                findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+                findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+                ((TextView) findViewById(R.id.speed)).setText(String.format("%.2f", download.getSpeed()/1000) + "KB/s ETA: " + Utils.formatEta(download.getEta()) );
+                ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+                ((TextView) findViewById(R.id.progress)).setText(download.getPercentDownloaded()+"%");
+                ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+                break;
 
-                case RESTARTING:
-                    break;
-                case STOPPED:
-                case COMPLETED:
-                    if(actionBar!=null){
-                        actionBar.dismiss();
-                    }
-                    findViewById(R.id.btinstall).setOnClickListener(installListener);
-                    findViewById(R.id.download_progress).setVisibility(View.GONE);
-//                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
-                    findViewById(R.id.downloading_name).setVisibility(View.GONE);
-                    break;
+//            case ERROR:
+//                    Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
 
-                default:
-                    break;
-            }
+//                    findViewById(R.id.download_progress).setVisibility(View.GONE);
+////                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
+//                    findViewById(R.id.downloading_name).setVisibility(View.GONE);
+//                    findViewById(R.id.btinstall).setOnClickListener(installListener);
+//                break;
 
+//            case PENDING:
+            case ERROR:
+                if(download.getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
+                    new DialogIpBlacklisted(ApkInfo.this).show();
+                }else{
+                    Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            case COMPLETE:
+                if (actionBar != null) {
+                    actionBar.dismiss();
+                }
+                findViewById(R.id.btinstall).setOnClickListener(installListener);
+                findViewById(R.id.download_progress).setVisibility(View.GONE);
+                findViewById(R.id.icon_manage).setVisibility(View.GONE);
+                findViewById(R.id.downloading_name).setVisibility(View.GONE);
+                break;
+//            case NOSTATE:
+//                findViewById(R.id.btinstall).setOnClickListener(installListener);
+//                findViewById(R.id.download_progress).setVisibility(View.GONE);
+//                findViewById(R.id.icon_manage).setVisibility(View.GONE);
+//                findViewById(R.id.downloading_name).setVisibility(View.GONE);
+//                break;
+            default:
+                break;
         }
-    };
+        }
+
+
+    }
 
 
 
@@ -1238,18 +1239,20 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
     @Override
     protected void onDestroy() {
+        BusProvider.getInstance().unregister(this);
+
         super.onDestroy();
 
-        if(download!=null&&!download.isNull()){
-            try {
-                serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+//        if(download!=null&&!download.isNull()){
+//            try {
+//                serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
         unbindService(serviceManagerConnection);
         unregisterReceiver(installedBroadcastReceiver);
-        handler = null;
+//        handler = null;
         if(mAdView!=null){
             mAdView.destroy();
         }
@@ -1266,17 +1269,18 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
         ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
 
-        switch (download.getDownloadStatus()) {
-            case SETTING_UP:
-            case RESTARTING:
-            case RESUMING:
-                break;
-
-            case DOWNLOADING:
+        switch (download.getStatusState().getEnumState()) {
+//            case SETTING_UP:
+//            case RESTARTING:
+//            case RESUMING:
+//                break;
+//
+            case ACTIVE:
                 actionBar.addActionItem(pauseItem);
                 break;
-
+//
             default:
+//                actionBar.addActionItem(pauseItem);
                 actionBar.addActionItem(playItem);
                 break;
         }
@@ -1286,32 +1290,35 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(QuickAction quickAction, int pos, final int actionId) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
+//                new Thread(new Runnable() {
+//                    public void run() {
+//                        try {
                             switch (EnumQuickActions.reverseOrdinal(actionId)) {
                                 case PLAY:
-                                    serviceDownloadManager
-                                            .callResumeDownload(download.hashCode());
+                                    download.download();
+//                                    serviceDownloadManager
+//                                            .callResumeDownload(download.hashCode());
                                     break;
 
                                 case PAUSE:
-                                    serviceDownloadManager
-                                            .callPauseDownload(download.hashCode());
+                                    download.pause();
+//                                    serviceDownloadManager
+//                                            .callPauseDownload(download.hashCode());
                                     break;
 
                                 case STOP:
-                                    serviceDownloadManager.callStopDownload(download.hashCode());
+                                    download.remove();
+//                                    serviceDownloadManager.callStopDownload(download.hashCode());
                                     break;
 
                                 default:
                                     break;
                             }
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }	).start();
+//                        } catch (RemoteException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }	).start();
 
             }
         });
@@ -1399,14 +1406,21 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                         patchObbUrl = webservice.getPatchOBB().getString("path");
                         patchObbMd5 = webservice.getPatchOBB().getString("md5sum");
                         patchObbName = webservice.getPatchOBB().getString("filename");
-                        patchObbSize = webservice.getMainOBB().getInt("filesize");
+                        patchObbSize = webservice.getPatchOBB().getInt("filesize");
 
 
                     }
                     ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ withSuffix((Long.parseLong(viewApk.getSize())*1024+mainObbSize+patchObbSize)));
 
+                    viewApk.setMainObbUrl(mainObbUrl);
+                    viewApk.setMainObbFileName(mainObbName);
+                    viewApk.setMainObbMd5(mainObbMd5);
+                    viewApk.setMainObbFileSize(mainObbSize);
 
-
+                    viewApk.setPatchObbUrl(patchObbUrl);
+                    viewApk.setPatchObbFileName(patchObbName);
+                    viewApk.setPatchObbMd5(patchObbMd5);
+                    viewApk.setPatchObbFileSize(patchObbSize);
 
                 }
 

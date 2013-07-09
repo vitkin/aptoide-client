@@ -60,7 +60,7 @@ public class ExtrasHandler extends DefaultHandler {
 				apkid=sb.toString();
 				break;
 			case CMT:
-				cmt=Html.fromHtml(sb.toString().replace("\n","<br>")).toString();
+				cmt = Html.fromHtml(sb.toString().replace("\n","<br>")).toString();
 				break;
 			case DELTA:
 

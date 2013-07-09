@@ -47,16 +47,13 @@ import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.MainService;
 import cm.aptoide.pt.services.MainService.LocalBinder;
-import cm.aptoide.pt.services.ServiceDownloadManager;
+import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.sharing.WebViewFacebook;
 import cm.aptoide.pt.sharing.WebViewTwitter;
 import cm.aptoide.pt.util.*;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -1123,18 +1120,13 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 				Cursor c = db.getUpdates(order);
 
 				for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-					ViewApk apk = db.getApk(c.getLong(0), Category.INFOXML);
-					try {
-						ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
-						ViewDownloadManagement download = new ViewDownloadManagement(apk.getPath(), apk, cache, db.getServer(apk.getRepo_id(), false).getLogin(), null);
-						serviceDownloadManager.callStartDownload(download);
-						Thread.sleep(1000);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
+					final ViewApk apk = db.getApk(c.getLong(0), Category.INFOXML);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
+                        }
+                    });
 				}
 
 				c.close();
@@ -1500,7 +1492,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 	private String storeUri = "apps.store.aptoide.com";
 
 	ViewPager pager;
-	private AIDLServiceDownloadManager serviceDownloadManager;
+	private ServiceManagerDownload serviceDownloadManager;
 	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
 
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -1508,7 +1500,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			// established, giving us the object we can use to
 			// interact with the service. We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
-			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceDownloadManager = ((ServiceManagerDownload.LocalBinder)service).getService();
 			((UpdatesAdapter) updatesAdapter).setServiceDownloadManager(serviceDownloadManager);
 			Log.v("Aptoide-UpdatesAdapter", "Connected to ServiceDownloadManager");
 
@@ -1539,8 +1531,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 
-		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
-		startService(serviceDownloadManagerIntent);
         mContext = this;
 
 
@@ -1610,6 +1600,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
 				}
+
+
 
 				if (sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0) {
 					DisplayMetrics dm = new DisplayMetrics();
@@ -1908,7 +1900,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		});
 
 
-		bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
+		bindService(new Intent(this,ServiceManagerDownload.class), serviceManagerConnection, BIND_AUTO_CREATE);
 
 		pb.setText(R.string.add_store_button_below);
 
@@ -2180,17 +2172,17 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		Button bt = (Button) LayoutInflater.from(mContext).inflate( R.layout.breadcrumb, null);
 		bt.setText(itemAtPosition);
 		bt.setTag(new BreadCrumb(depth, breadcrumbs.getChildCount() + 1));
-		System.out.println(breadcrumbs.getChildCount() + 1);
-//		bt.setOnClickListener(new OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				depth = ((BreadCrumb) v.getTag()).depth;
-//				breadcrumbs.removeViews(((BreadCrumb) v.getTag()).i , breadcrumbs.getChildCount() - ((BreadCrumb) v.getTag()).i);
-//				refreshAvailableList(true);
-//			}
-//		});
+		bt.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				depth = ((BreadCrumb) v.getTag()).depth;
+				breadcrumbs.removeViews(((BreadCrumb) v.getTag()).i , breadcrumbs.getChildCount() - ((BreadCrumb) v.getTag()).i);
+				refreshAvailableList(true);
+			}
+		});
 		breadcrumbs.addView(bt, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        breadcrumbs.setOnClickListener(null);
 	}
 
 	@Override
@@ -2375,6 +2367,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
             ApplicationAptoide.restartLauncher(MainActivity.this);
             ApplicationAptoide.setRestartLauncher(false);
         }
+
+
 		return super.onKeyDown(keyCode, event);
 	}
 
@@ -2384,7 +2378,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-
 		availableAdapter.swapCursor(null);
 	}
 

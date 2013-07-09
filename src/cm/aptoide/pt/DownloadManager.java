@@ -19,25 +19,31 @@
 */
 package cm.aptoide.pt;
 
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.*;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.adapters.DownloadedListAdapter;
 import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
+import cm.aptoide.pt.download.DownloadInfo;
+import cm.aptoide.pt.download.Utils;
+import cm.aptoide.pt.download.event.DownloadStatusEvent;
+import cm.aptoide.pt.events.BusProvider;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
-import cm.aptoide.pt.services.ServiceDownloadManager;
+import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.views.EnumDownloadStatus;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
 
 /**
  * DownloadManager
@@ -45,7 +51,7 @@ import cm.aptoide.pt.views.EnumDownloadStatus;
  * @author dsilveira
  *
  */
-public class DownloadManager extends SherlockActivity /*SherlockActivity */{
+public class DownloadManager extends ListActivity /*SherlockActivity */{
 	private boolean isRunning = false;
 
 	private LinearLayout downloading;
@@ -64,27 +70,37 @@ public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 	private AIDLServiceDownloadManager serviceManager = null;
 
 	private boolean serviceManagerIsBound = false;
-
+    ArrayList<DownloadInfo> list;
 	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the object we can use to
 			// interact with the service.  We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
-			serviceManager = AIDLServiceDownloadManager.Stub.asInterface(service);
-			serviceManagerIsBound = true;
+//			serviceManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+//			serviceManagerIsBound = true;
+//
+//			Log.v("Aptoide-DownloadManager", "Connected to ServiceDownloadManager");
+//
+//			try {
+//				serviceManager.callRegisterDownloadManager(serviceManagerCallback);
+//			} catch (RemoteException e) {
+//				e.printStackTrace();
+//			}
+//
+//			continueLoading();
 
-			Log.v("Aptoide-DownloadManager", "Connected to ServiceDownloadManager");
+            ServiceManagerDownload dm = ((ServiceManagerDownload.LocalBinder) service).getService();
 
-			try {
-				serviceManager.callRegisterDownloadManager(serviceManagerCallback);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
+            list = new ArrayList<DownloadInfo>();
+            list.addAll(dm.getDownloads());
 
-			continueLoading();
+//            sort(list);
+            adapter = new MyAdapter(DownloadManager.this, list);
+            setListAdapter(adapter);
 
-		}
+        }
+
 
 		public void onServiceDisconnected(ComponentName className) {
 			// This is called when the connection with the service has been
@@ -96,7 +112,10 @@ public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 		}
 	};
 
-	private AIDLDownloadManager.Stub serviceManagerCallback = new AIDLDownloadManager.Stub() {
+    MyAdapter adapter;
+
+
+    private AIDLDownloadManager.Stub serviceManagerCallback = new AIDLDownloadManager.Stub() {
 
 		@Override
 		public void updateDownloadStatus(int status) throws RemoteException {
@@ -246,94 +265,200 @@ public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 		}
 	}
 
+
+    @Subscribe
+    public void onDownloadTick(DownloadInfo download){
+
+        ListView list = getListView();
+        int start = list.getFirstVisiblePosition();
+        for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
+            if (download == list.getItemAtPosition(i)) {
+                View view = list.getChildAt(i - start);
+                list.getAdapter().getView(i, view, list);
+                break;
+            }
+    }
+
+    @Subscribe public void onDownloadEvent(DownloadStatusEvent event){
+
+        if(adapter!=null){
+            adapter.notifyDataSetChanged();
+        }
+//        sort(list);
+
+
+    }
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		if(!isRunning){
-			isRunning = true;
+        BusProvider.getInstance().register(this);
+        setContentView(R.layout.download_manager);
 
-			if(!serviceManagerIsBound){
-	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
-	    	}
+        registerForContextMenu(getListView());
 
-			setContentView(R.layout.download_manager);
-//			getSupportActionBar().setIcon(R.drawable.brand_padding);
-//			getSupportActionBar().setTitle(getString(R.string.download_manager));
-//			getSupportActionBar().setHomeButtonEnabled(true);
-//			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
-			downloading.setVisibility(View.GONE);
 
-			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
-			downloaded.setVisibility(View.GONE);
-
-			notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
-			notDownloaded.setVisibility(View.GONE);
-
-			exitButton = (Button) findViewById(R.id.exit);
-			exitButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					finish();
-				}
-			});
-
-			noDownloads = (TextView) findViewById(R.id.no_downloads);
-			noDownloads.setVisibility(View.VISIBLE);
-		}
+//		if(!isRunning){
+//			isRunning = true;
+//
+//			if(!serviceManagerIsBound){
+	    		bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+//	    	}
+//
+//			setContentView(R.layout.download_manager);
+////			getSupportActionBar().setIcon(R.drawable.brand_padding);
+////			getSupportActionBar().setTitle(getString(R.string.download_manager));
+////			getSupportActionBar().setHomeButtonEnabled(true);
+////			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
+//			downloading.setVisibility(View.GONE);
+//
+//			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
+//			downloaded.setVisibility(View.GONE);
+//
+//			notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
+//			notDownloaded.setVisibility(View.GONE);
+//
+//			exitButton = (Button) findViewById(R.id.exit);
+//			exitButton.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					finish();
+//				}
+//			});
+//
+//			noDownloads = (TextView) findViewById(R.id.no_downloads);
+//			noDownloads.setVisibility(View.VISIBLE);
+//		}
 
 	}
 
-	private void continueLoading(){
-		ListView uploadingList = (ListView) findViewById(R.id.downloading_list);
-		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, ImageLoader.getInstance());
-		uploadingList.setAdapter(downloadingAdapter);
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
 
-		ListView uploadedList = (ListView) findViewById(R.id.downloaded_list);
-		downloadedAdapter = new DownloadedListAdapter(this, ImageLoader.getInstance());
-		uploadedList.setAdapter(downloadedAdapter);
+        menu.add(0, 0, 0, "Pause");
+        menu.add(0, 1, 1, "Resume");
 
-		uploadedList.setOnItemClickListener(new OnItemClickListener() {
+    }
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				try {
-					serviceManager.callInstallApp(downloadedAdapter.getItem(position));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
+    @Override
+    public boolean onContextItemSelected(android.view.MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()){
 
-		});
+            case 0:
+                ((DownloadInfo)getListAdapter().getItem(info.position)).pause();
+                break;
+            case 1:
+                ((DownloadInfo)getListAdapter().getItem(info.position)).download();
+                break;
 
-		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
-		notDownloadedAdapter = new NotDownloadedListAdapter(this, ImageLoader.getInstance());
-		notUploadedList.setAdapter(notDownloadedAdapter);
-		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
-				try {
-					serviceManager.callRestartDownload(notDownloadedAdapter.getItem(position).hashCode());
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+        }
 
-		prePopulateLists();
-		registerForContextMenu(uploadedList);
-	}
+        return super.onContextItemSelected(item);
+    }
+
+    public class MyAdapter extends BaseAdapter {
+
+
+        private final ArrayList<DownloadInfo> list;
+        private final Context context;
+
+        public MyAdapter(Context context, ArrayList<DownloadInfo> list) {
+            this.list = list;
+            this.context = context;
+        }
+
+
+        @Override
+        public int getCount() {
+            return list.size();  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public DownloadInfo getItem(int position) {
+            return list.get(position);  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return list.get(position).getId();  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            TextView view;
+            if (convertView == null) {
+                view = new TextView(context);
+            } else {
+                view = (TextView) convertView;
+            }
+
+            try {
+                DownloadInfo info = getItem(position);
+                view.setText(info.getStatusState().getEnumState() + " " + Utils.formatEta(info.getEta()) + " " + String.format("%.2f", info.getSpeed()/1000) + " KB/s" + " Progress:" + info.getPercentDownloaded());
+            } catch (ClassCastException e) {
+                Log.e("ArrayAdapter", "You must supply a resource ID for a TextView");
+                throw new IllegalStateException(
+                        "ArrayAdapter requires the resource ID to be a TextView", e);
+            }
+
+            return view;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+    }
+
+//	private void continueLoading(){
+//		ListView uploadingList = (ListView) findViewById(R.id.downloading_list);
+//		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, ImageLoader.getInstance());
+//		uploadingList.setAdapter(downloadingAdapter);
+//
+//		ListView uploadedList = (ListView) findViewById(R.id.downloaded_list);
+//		downloadedAdapter = new DownloadedListAdapter(this, ImageLoader.getInstance());
+//		uploadedList.setAdapter(downloadedAdapter);
+//
+//		uploadedList.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				try {
+//					serviceManager.callInstallApp(downloadedAdapter.getItem(position));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//
+//		});
+//
+//		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
+//		notDownloadedAdapter = new NotDownloadedListAdapter(this, ImageLoader.getInstance());
+//		notUploadedList.setAdapter(notDownloadedAdapter);
+//		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
+//				try {
+//					serviceManager.callRestartDownload(notDownloadedAdapter.getItem(position).hashCode());
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//
+//		prePopulateLists();
+//		registerForContextMenu(uploadedList);
+//	}
 
 	@Override
 	protected void onDestroy() {
-		try {
-			serviceManager.callUnregisterDownloadManager();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		unbindService(serviceManagerConnection);
+//		try {
+//			serviceManager.callUnregisterDownloadManager();
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
+//		unbindService(serviceManagerConnection);
 		super.onDestroy();
 	}
 
@@ -362,15 +487,15 @@ public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 //		return super.onContextItemSelected(item);
 //	}
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
+//	@Override
+//	public boolean onPrepareOptionsMenu(Menu menu) {
+//		menu.clear();
+//		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
+//
+//		return super.onPrepareOptionsMenu(menu);
+//	}
 
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
+//	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 //		if (item.getItemId() == android.R.id.home) {
 //			finish();

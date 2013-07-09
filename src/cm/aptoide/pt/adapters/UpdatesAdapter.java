@@ -10,8 +10,6 @@ package cm.aptoide.pt.adapters;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.os.RemoteException;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
@@ -22,18 +20,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownloadManagement;
 
 public class UpdatesAdapter extends CursorAdapter {
 
-	private AIDLServiceDownloadManager serviceDownloadManager = null;
+	private ServiceManagerDownload serviceDownloadManager = null;
 	private Loader<Cursor> loader;
 
 
@@ -46,7 +41,7 @@ public class UpdatesAdapter extends CursorAdapter {
 	 * @param serviceDownloadManager the serviceDownloadManager to set
 	 */
 	public void setServiceDownloadManager(
-			AIDLServiceDownloadManager serviceDownloadManager) {
+			ServiceManagerDownload serviceDownloadManager) {
 		this.serviceDownloadManager = serviceDownloadManager;
 	}
 
@@ -68,12 +63,12 @@ public class UpdatesAdapter extends CursorAdapter {
             holder.icon= (ImageView) view.findViewById(R.id.app_icon);
             holder.vername= (TextView) view.findViewById(R.id.uptodate_versionname);
             holder.update = (ImageView) view.findViewById(R.id.app_update);
-           
-            if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || 
+
+            if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
             		(context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
             	holder.ignore_update = (ImageView) view.findViewById(R.id.app_ignore_update);
            	}
-            
+
 //            holder.downloads= (TextView) view.findViewById(R.id.downloads);
 //            holder.rating= (RatingBar) view.findViewById(R.id.stars);
             view.setTag(holder);
@@ -99,15 +94,11 @@ public class UpdatesAdapter extends CursorAdapter {
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
-				try {
-					Log.d("UpdatesAdapter","about to call service download manager to "+apk.getName());
-					serviceDownloadManager.callStartDownload(new ViewDownloadManagement(apkpath,apk,new ViewCache(apk.hashCode(),apk.getMd5(),apkId,vername), null));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
+				Log.d("UpdatesAdapter","about to call service download manager to "+apk.getName());
+				serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk),apk);
 			}
 		});
-		if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || 
+		if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
         		(context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
 			holder.ignore_update.setOnClickListener(new View.OnClickListener() {
 
@@ -124,11 +115,11 @@ public class UpdatesAdapter extends CursorAdapter {
 			});
 		}
 	}
-	
+
 	public void setLoader(Loader<Cursor> thisLoader){
-		
+
 		this.loader=thisLoader;
-		
+
 	}
 
 	public static class ViewHolder {
