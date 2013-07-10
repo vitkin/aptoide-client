@@ -30,7 +30,8 @@ public enum EnumQuickActions {
 	PLAY,
 	PAUSE,
     DELETE,
-	STOP;
+	STOP, 
+	SHARE;
 
 	public static EnumQuickActions reverseOrdinal(int ordinal){
 		return values()[ordinal];

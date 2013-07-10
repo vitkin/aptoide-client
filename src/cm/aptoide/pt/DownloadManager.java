@@ -21,8 +21,11 @@ package cm.aptoide.pt;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.DialogInterface.OnDismissListener;
+import android.graphics.Color;
 import android.os.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -39,10 +42,12 @@ import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.download.DownloadInfo;
+import cm.aptoide.pt.download.Utils;
 import cm.aptoide.pt.download.event.DownloadStatusEvent;
 import cm.aptoide.pt.events.BusProvider;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceManagerDownload;
+import cm.aptoide.pt.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
@@ -366,7 +371,7 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
         views.add(notOngoingList);
         ViewPagerAdapter adapter = new ViewPagerAdapter(this, views);
         vp.setAdapter(adapter);
-        adapter.setTitles(new String[]{"Ongoing", "Not Ongoing"});
+        adapter.setTitles(new String[]{getString(R.string.downloading_apps), getString(R.string.downloaded_apps)});
         TitlePageIndicator pageIndicator = (TitlePageIndicator) findViewById(R.id.downloadManagerPageIndicator);
         pageIndicator.setViewPager(vp);
 
@@ -450,6 +455,7 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
         ProgressBar app_download_progress;
         TextView app_progress;
         TextView app_speed;
+        TextView app_eta;
         ImageView manageDownloadsButton;
 
     }
@@ -461,14 +467,15 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
         private final ActionItem pauseItem;
         private final ActionItem stopItem;
         private final ActionItem deleteItem;
+        private final ActionItem shareItem;
 
         public MyAdapter(Context context, ArrayList<DownloadInfo> list) {
             super(context, 0, list);
-            playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
-            pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
-            stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
-            deleteItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Clear", context.getResources().getDrawable(android.R.drawable.ic_delete));
-
+            playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), getString(R.string.resume), context.getResources().getDrawable(R.drawable.ic_media_play));
+            pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), getString(R.string.pause), context.getResources().getDrawable(R.drawable.ic_media_pause));
+            stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), getString(R.string.stop), context.getResources().getDrawable(R.drawable.ic_media_stop));
+            deleteItem = new ActionItem(EnumQuickActions.STOP.ordinal(), getString(R.string.clear), context.getResources().getDrawable(R.drawable.ic_menu_close_clear_cancel));
+            shareItem = new ActionItem(EnumQuickActions.SHARE.ordinal(), getString(R.string.share), context.getResources().getDrawable(R.drawable.ic_menu_share));
         }
 
 
@@ -494,6 +501,7 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
                 rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloading_icon);
                 rowViewHolder.app_progress = (TextView) convertView.findViewById(R.id.progress);
                 rowViewHolder.app_speed = (TextView) convertView.findViewById(R.id.speed);
+                rowViewHolder.app_eta = (TextView) convertView.findViewById(R.id.eta);
                 rowViewHolder.manageDownloadsButton = (ImageView) convertView.findViewById(R.id.icon_manage);
                 convertView.setTag(rowViewHolder);
             }else{
@@ -504,20 +512,40 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
             rowViewHolder.app_name.setText(download.getViewApk().getName()+"  "+download.getViewApk().getVername());
             rowViewHolder.app_progress.setText(download.getPercentDownloaded() + "%");
-            rowViewHolder.app_speed.setText(download.getSpeed()/1000+ " KB/s");
-
+            
+            rowViewHolder.app_eta.setText(Utils.formatEta(download.getEta())+" "+getString(R.string.time_left));
+            
+            if(download.getPercentDownloaded()==0){
+            	 rowViewHolder.app_download_progress.setIndeterminate(true);
+            	 rowViewHolder.app_speed.setText(R.string.starting);
+             }else{
+            	 rowViewHolder.app_download_progress.setIndeterminate(false);
+            	 rowViewHolder.app_speed.setText(Utils.formatBytes((long)download.getSpeed()) + "/s ");
+            }
+            
             switch (download.getStatusState().getEnumState()){
                 case ERROR:
-                    rowViewHolder.app_speed.setText("Error due to: " + download.getFailReason().toString(getContext()));
+                    rowViewHolder.app_speed.setText(getString(R.string.download_failed_due_to) +": "+ download.getFailReason().toString(getContext()));
+                    
+                    rowViewHolder.app_progress.setVisibility(View.GONE);
+                    rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case COMPLETE:
+                	rowViewHolder.app_speed.setText(getString(R.string.completed));
+                	
                     rowViewHolder.app_download_progress.setVisibility(View.GONE);
+                    rowViewHolder.app_progress.setVisibility(View.GONE);
+                    rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case PENDING:
-                    rowViewHolder.app_speed.setText("On Queue");
+                    rowViewHolder.app_speed.setText(getString(R.string.waiting));
+                    
+                    rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case INACTIVE:
-                    rowViewHolder.app_speed.setText("Paused");
+                    rowViewHolder.app_speed.setText(getString(R.string.paused));
+                    
+                    rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
             }
 
@@ -538,16 +566,21 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
                     switch (download.getStatusState().getEnumState()) {
 
-                        case ACTIVE:
-                            actionBar.addActionItem(pauseItem);
-                            actionBar.addActionItem(stopItem);
-                            break;
-                        case COMPLETE:
-                            actionBar.addActionItem(deleteItem);
-                            break;
-                        default:
-                            actionBar.addActionItem(playItem);
-                            break;
+                    case ACTIVE:
+                    	actionBar.addActionItem(pauseItem);
+                    	actionBar.addActionItem(stopItem);
+                    	break;
+                    case COMPLETE:
+                    	actionBar.addActionItem(deleteItem);
+                    	actionBar.addActionItem(shareItem);
+                    	break;
+                    case ERROR:
+                    	actionBar.addActionItem(playItem);
+                    	actionBar.addActionItem(stopItem);
+                    	break;
+                    default:
+                    	actionBar.addActionItem(playItem);
+                    	break;
                     }
 
                     actionBar.show(view);
@@ -567,12 +600,19 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
                                     case STOP:
                                         download.remove();
                                         break;
-
+                                    case SHARE:
+                                    	shareOnFacebook(download);
+                                    	break;
 
                                     default:
                                         break;
                             }
                         }
+
+						
+							
+							
+						
                     });
 
                 }
@@ -580,6 +620,34 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
             return convertView;
         }
+    }
+
+    private void shareOnFacebook(DownloadInfo download) {
+    	String facebookShareName = download.getViewApk().getName()+"  "+download.getViewApk().getVername();
+    	String facebookShareIcon = download.getViewApk().getIcon();
+    	String facebookShareMessage = getString(R.string.i_downloaded_to_install, facebookShareName);
+    	String facebookShareDescription;
+    	String facebookShareStoreLink;
+    	if(download.getViewApk().getRepoName().equals("Aptoide")){
+    		facebookShareDescription = getString(R.string.visit_and_install_the_best_apps, ApplicationAptoide.MARKETNAME);
+    		facebookShareStoreLink = getString(R.string.aptoide_url_topapps);
+    	}else{
+    		facebookShareDescription = getString(R.string.visit_and_install, download.getViewApk().getRepoName());
+    		facebookShareStoreLink = "http://"+download.getViewApk().getRepoName()+".store.aptoide.com";
+    	}
+
+    	Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareMessage+", StoreLinkToPost: "+facebookShareStoreLink);
+
+    	final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(this, facebookShareName, facebookShareIcon, facebookShareMessage, facebookShareDescription, facebookShareStoreLink);
+
+    	shareFacebook.setOnDismissListener(new OnDismissListener() {
+    		@Override
+    		public void onDismiss(DialogInterface dialog) {
+    			shareFacebook.dismiss();
+    		}
+    	});
+
+    	shareFacebook.show();
     }
 
 //	private void continueLoading(){

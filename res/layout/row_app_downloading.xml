@@ -49,7 +49,17 @@
             <TextView
                 android:id="@+id/speed"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/eta"
+                android:layout_toRightOf="@+id/speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp" />
 
             <TextView
                 android:id="@+id/progress"

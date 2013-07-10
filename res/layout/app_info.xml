@@ -37,6 +37,19 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white" />
 
+<!--         <TextView -->
+<!--             android:id="@+id/app_category" -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignLeft="@+id/app_name" -->
+<!--             android:layout_below="@+id/app_name" -->
+<!--             android:layout_toLeftOf="@+id/btinstall" -->
+<!--             android:ellipsize="end" -->
+<!--             android:gravity="center_vertical" -->
+<!--             android:maxLines="1" -->
+<!--             android:singleLine="true" -->
+<!--             android:textColor="@android:color/white" /> -->
+
         <RatingBar
             android:id="@+id/ratingbar"
             style="?android:attr/ratingBarStyleSmall"
@@ -119,9 +132,9 @@
                 android:id="@+id/gallery"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:spacing="1dp"
-                android:paddingTop="5dp"
                 android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:spacing="1dp"
                 android:visibility="gone" />
             <!-- <RelativeLayout -->
             <!-- android:id="@+id/screenshots_container" -->
@@ -497,8 +510,8 @@
         <com.mopub.mobileads.MoPubView
             android:id="@+id/adview"
             android:layout_width="fill_parent"
-            android:fitsSystemWindows="true"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:fitsSystemWindows="true" />
     </LinearLayout>
 
 </RelativeLayout>
