@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.download.*;
+import cm.aptoide.pt.download.event.DownloadStatusEvent;
 import cm.aptoide.pt.download.state.EnumState;
 import cm.aptoide.pt.events.BusProvider;
 import cm.aptoide.pt.util.Constants;
@@ -34,6 +35,7 @@ public class ServiceManagerDownload extends Service {
     private Collection<DownloadInfo> ongoingDownloads;
 
 
+
     @Override
     public IBinder onBind(Intent intent) {
         return new LocalBinder();  //To change body of implemented methods use File | Settings | File Templates.
@@ -43,6 +45,18 @@ public class ServiceManagerDownload extends Service {
 
     public Collection<DownloadInfo> getDownloads() {
         return downloads.values();
+    }
+
+    public ArrayList<DownloadInfo> getNotOngoingDownloads() {
+        ArrayList<DownloadInfo> list = new ArrayList<DownloadInfo>();
+
+        for(DownloadInfo downloadInfo: getDownloads()){
+            if(downloadInfo.getStatusState().getEnumState().equals(EnumState.COMPLETE) ){
+                list.add(downloadInfo);
+            }
+        }
+
+        return list;
     }
 
     public class LocalBinder extends Binder {
@@ -90,6 +104,7 @@ public class ServiceManagerDownload extends Service {
 
     @Subscribe public void removeDownload(DownloadRemoveEvent id){
         BusProvider.getInstance().post(downloads.remove(id.getId()));
+        BusProvider.getInstance().post(new DownloadStatusEvent());
     }
 
     @Subscribe public void updateDownload(DownloadInfo id){
@@ -148,11 +163,11 @@ public class ServiceManagerDownload extends Service {
     }
 
 
-    public Collection<DownloadInfo> getOngoingDownloads(){
-        Collection<DownloadInfo> list = new ArrayList<DownloadInfo>();
+    public ArrayList<DownloadInfo> getOngoingDownloads(){
+        ArrayList<DownloadInfo> list = new ArrayList<DownloadInfo>();
 
         for(DownloadInfo downloadInfo: getDownloads()){
-            if(downloadInfo.getStatusState().getEnumState().equals(EnumState.ACTIVE) || downloadInfo.getStatusState().getEnumState().equals(EnumState.INACTIVE)){
+            if(!downloadInfo.getStatusState().getEnumState().equals(EnumState.COMPLETE) && !downloadInfo.getStatusState().getEnumState().equals(EnumState.NOSTATE) ){
                 list.add(downloadInfo);
             }
         }

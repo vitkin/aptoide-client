@@ -14,7 +14,6 @@ import android.content.*;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -30,9 +29,8 @@ import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
-import cm.aptoide.pt.services.ServiceDownloadManager;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.services.ServiceManagerDownload;
+import cm.aptoide.pt.views.ViewApk;
 
 import java.util.HashMap;
 
@@ -45,7 +43,7 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 
     private boolean isRunning = false;
 
-	private AIDLServiceDownloadManager serviceDownloadManager = null;
+	private ServiceManagerDownload serviceDownloadManager = null;
 
 	private boolean serviceManagerIsBound = false;
 
@@ -55,7 +53,7 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 			// established, giving us the object we can use to
 			// interact with the service.  We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
-			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceDownloadManager = ((ServiceManagerDownload.LocalBinder)service).getService();
 			serviceManagerIsBound = true;
 
 			Log.v("Aptoide-ScheduledDownloads", "Connected to ServiceDownloadManager");
@@ -94,7 +92,7 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 			isRunning = true;
 
 			if(!serviceManagerIsBound){
-				bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+				bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
 			}
 
 		}
@@ -209,31 +207,16 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
                             apk.setIconPath(schDown.getIconPath());
                             apk.setVername(schDown.getVername());
                             apk.setMd5(schDown.getMd5());
+                            apk.setPath(schDown.getUrl());
+                            apk.setMainObbUrl(schDown.getMainObbPath());
+                            apk.setMainObbMd5(schDown.getMainObbMd5sum());
+                            apk.setMainObbFileName(schDown.getMainObbFilename());
+                            apk.setPatchObbUrl(schDown.getPatchObbPath());
+                            apk.setPatchObbMd5(schDown.getPatchObbMd5sum());
+                            apk.setPatchObbFileName(schDown.getPatchObbFilename());
 
+                            serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
 
-                            ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
-
-                            ViewCacheObb mainObbCache = null;
-                            if(schDown.getMainObbPath()!=null){
-                                mainObbCache = new ViewCacheObb((apk.getApkid()+".obb"+"|"+apk.getVercode()).hashCode(),schDown.getMainObbFilename(), schDown.getMainObbMd5sum(), cache, apk.getApkid());
-                            }
-
-                            ViewCacheObb patchObbCache = null;
-                            if(schDown.getPatchObbPath()!=null){
-                                patchObbCache = new ViewCacheObb((apk.getApkid()+".obb2"+"|"+apk.getVercode()).hashCode(),schDown.getPatchObbFilename(),   schDown.getPatchObbMd5sum(), cache, apk.getApkid());
-                            }
-                            ViewObb obb = null;
-
-                            if(mainObbCache!=null){
-                                obb = new ViewObb(schDown.getMainObbPath(), schDown.getPatchObbPath(), mainObbCache, patchObbCache);
-                            }
-
-
-                            try {
-                                serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(), apk, new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername()), obb));
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
                         }
                     }
 
@@ -258,17 +241,21 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
 						ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
 						ViewApk apk = new ViewApk();
-						apk.setApkid(schDown.getApkid());
-						apk.setName(schDown.getName());
-						apk.setIconPath(schDown.getIconPath());
-						apk.setVercode(schDown.getVercode());
-						apk.setVername(schDown.getVername());
-						apk.setMd5(schDown.getMd5());
-						try {
-							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername()), null));
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
+                        apk.setApkid(schDown.getApkid());
+                        apk.setName(schDown.getName());
+                        apk.setVercode(schDown.getVercode());
+                        apk.setIconPath(schDown.getIconPath());
+                        apk.setVername(schDown.getVername());
+                        apk.setMd5(schDown.getMd5());
+                        apk.setPath(schDown.getUrl());
+                        apk.setMainObbUrl(schDown.getMainObbPath());
+                        apk.setMainObbMd5(schDown.getMainObbMd5sum());
+                        apk.setMainObbFileName(schDown.getMainObbFilename());
+                        apk.setPatchObbUrl(schDown.getPatchObbPath());
+                        apk.setPatchObbMd5(schDown.getPatchObbMd5sum());
+                        apk.setPatchObbFileName(schDown.getPatchObbFilename());
+
+                        serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
 					}
 					finish();
 					return;
@@ -589,7 +576,7 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 //			for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
 //				scheduledDownloadsHashMap.get(scheduledDownload).toggleChecked();
 //			}
-//			adapter.notifyDataSetInvalidated();
+//			onGoingadapter.notifyDataSetInvalidated();
 //			break;
 //		default:
 //			break;

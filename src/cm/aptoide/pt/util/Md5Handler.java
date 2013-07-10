@@ -14,21 +14,19 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 public class Md5Handler {
-	
-	private static MessageDigest digest;
-	
-	
-	public static String md5Calc(File f){
+
+
+    public static String md5Calc(File f){
 		int i;
-		String md5hash = "";		
+		String md5hash = "";
 		byte[] buffer = new byte[1024];
 		int read = 0;
 		try {
-			digest = MessageDigest.getInstance("MD5");
+            MessageDigest digest = MessageDigest.getInstance("MD5");
 			InputStream is = new FileInputStream(f);
 			while( (read = is.read(buffer)) > 0) {
 				digest.update(buffer, 0, read);
-			}		
+			}
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
 			md5hash = bigInt.toString(16);
@@ -36,7 +34,7 @@ public class Md5Handler {
 			e.printStackTrace();
 			return md5hash;
 		}
-		
+
 		if(md5hash.length() != 33){
 			String tmp = "";
 			for(i=1; i< (33-md5hash.length()); i++){
@@ -44,7 +42,7 @@ public class Md5Handler {
 			}
 			md5hash = tmp.concat(md5hash);
 		}
-		
+
 		return md5hash;
 	}
 

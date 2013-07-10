@@ -17,7 +17,11 @@ import java.util.ArrayList;
 
 public class ViewPagerAdapter extends PagerAdapter {
 
-	String[] titles;
+    public void setTitles(String[] titles) {
+        this.titles = titles;
+    }
+
+    String[] titles;
 	ArrayList<View> views = new ArrayList<View>();
 	private Context context;
 

@@ -27,7 +27,8 @@ public class ActiveState extends StatusState {
 		if (DownloadManager.INSTANCE.addToActiveList(mDownloadInfo)) {
 			// Set the status state before starting new thread because the while loop in the run method
 			// depends on the status state being active.
-			mDownloadInfo.setStatusState(this);
+//            Toast.makeText(ApplicationAptoide.getContext(), ApplicationAptoide.getContext().getString(R.string.starting_download), Toast.LENGTH_LONG).show();
+            mDownloadInfo.setStatusState(this);
 			Thread t = new Thread(mDownloadInfo);
 			t.start();
 			return true;

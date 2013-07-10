@@ -1,6 +1,8 @@
 package cm.aptoide.pt.download;
 
 import android.util.Log;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.util.NetworkUtils;
 import org.apache.http.HttpStatus;
 
 import java.io.BufferedInputStream;
@@ -19,6 +21,8 @@ public class DownloadConnectionImpl extends DownloadConnection {
 
     HttpURLConnection connection;
     private BufferedInputStream mStream;
+    private final static int TIME_OUT = 10000;
+
 
     public DownloadConnectionImpl(URL url) throws IOException {
         super(url);
@@ -27,6 +31,11 @@ public class DownloadConnectionImpl extends DownloadConnection {
     @Override
     public long connect(long downloaded) throws IOException, CompletedDownloadException, NotFoundException, IPBlackListedException {
         connection = (HttpURLConnection) this.mURL.openConnection();
+
+        connection.setConnectTimeout(TIME_OUT);
+        connection.setReadTimeout(TIME_OUT);
+        connection.setRequestProperty("User-Agent", NetworkUtils.getUserAgentString(ApplicationAptoide.getContext()));
+
         if (downloaded > 0L) {
             // server must support partial content for resume
             connection.addRequestProperty("Range", "bytes=" + downloaded + "-");

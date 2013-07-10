@@ -40,6 +40,7 @@ public class DownloadManager {
         }
     }
 
+
     /**
 	 * Enum for default file exist behaviors.
 	 */

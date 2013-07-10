@@ -1631,8 +1631,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 
                         if(dir.mkdir()){
-                            // Optain list of files in the directory.
-                            // listFiles() returns a list of File objects to each
+                            // Optain onGoingArrayList of files in the directory.
+                            // listFiles() returns a onGoingArrayList of File objects to each
                             // file found.
                             File[] files = dir.listFiles();
 

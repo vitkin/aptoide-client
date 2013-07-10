@@ -19,31 +19,39 @@
 */
 package cm.aptoide.pt;
 
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.*;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 import cm.aptoide.pt.adapters.DownloadedListAdapter;
 import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
+import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.download.DownloadInfo;
-import cm.aptoide.pt.download.Utils;
 import cm.aptoide.pt.download.event.DownloadStatusEvent;
 import cm.aptoide.pt.events.BusProvider;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceManagerDownload;
+import cm.aptoide.pt.util.quickaction.ActionItem;
+import cm.aptoide.pt.util.quickaction.EnumQuickActions;
+import cm.aptoide.pt.util.quickaction.QuickAction;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * DownloadManager
@@ -51,7 +59,7 @@ import java.util.ArrayList;
  * @author dsilveira
  *
  */
-public class DownloadManager extends ListActivity /*SherlockActivity */{
+public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 	private boolean isRunning = false;
 
 	private LinearLayout downloading;
@@ -70,8 +78,9 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
 	private AIDLServiceDownloadManager serviceManager = null;
 
 	private boolean serviceManagerIsBound = false;
-    ArrayList<DownloadInfo> list;
-	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+
+    private ArrayList<DownloadInfo> notOnGoingArrayList;
+    private ServiceConnection serviceManagerConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the object we can use to
@@ -90,16 +99,22 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
 //
 //			continueLoading();
 
-            ServiceManagerDownload dm = ((ServiceManagerDownload.LocalBinder) service).getService();
+            dm = ((ServiceManagerDownload.LocalBinder) service).getService();
 
-            list = new ArrayList<DownloadInfo>();
-            list.addAll(dm.getDownloads());
 
-//            sort(list);
-            adapter = new MyAdapter(DownloadManager.this, list);
-            setListAdapter(adapter);
+            onGoingArrayList = dm.getOngoingDownloads();
+            notOnGoingArrayList = dm.getNotOngoingDownloads();
+//            sort(onGoingArrayList);
+            onGoingadapter = new MyAdapter(DownloadManager.this, onGoingArrayList);
+            notOngoingAdapter = new MyAdapter(DownloadManager.this, notOnGoingArrayList);
+
+            sort(onGoingArrayList);
+
+            onGoingList.setAdapter(onGoingadapter);
+            notOngoingList.setAdapter(notOngoingAdapter);
 
         }
+
 
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -112,7 +127,10 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
 		}
 	};
 
-    MyAdapter adapter;
+    ServiceManagerDownload dm;
+    ArrayList<DownloadInfo> onGoingArrayList;
+    MyAdapter onGoingadapter;
+    MyAdapter notOngoingAdapter;
 
 
     private AIDLDownloadManager.Stub serviceManagerCallback = new AIDLDownloadManager.Stub() {
@@ -222,9 +240,11 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
 
 		}
 	};
+    private ListView onGoingList;
+    private ListView notOngoingList;
 
 
-	private void prePopulateLists(){
+    private void prePopulateLists(){
 		try {
 
 			if(serviceManager.callAreDownloadsOngoing()){
@@ -269,41 +289,103 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
     @Subscribe
     public void onDownloadTick(DownloadInfo download){
 
-        ListView list = getListView();
-        int start = list.getFirstVisiblePosition();
-        for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
-            if (download == list.getItemAtPosition(i)) {
-                View view = list.getChildAt(i - start);
-                list.getAdapter().getView(i, view, list);
-                break;
-            }
+        try{
+            ListView list = onGoingList;
+            int start = list.getFirstVisiblePosition();
+            for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
+                if (download == list.getItemAtPosition(i)) {
+                    View view = list.getChildAt(i - start);
+                    list.getAdapter().getView(i, view, list);
+                    break;
+                }
+        }catch (Exception e){
+            ListView list = notOngoingList;
+            int start = list.getFirstVisiblePosition();
+            for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
+                if (download == list.getItemAtPosition(i)) {
+                    View view = list.getChildAt(i - start);
+                    list.getAdapter().getView(i, view, list);
+                    break;
+                }
+        }
+
     }
 
     @Subscribe public void onDownloadEvent(DownloadStatusEvent event){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                onGoingadapter.clear();
+//                notOngoingAdapter.clear();
 
-        if(adapter!=null){
-            adapter.notifyDataSetChanged();
-        }
-//        sort(list);
+                onGoingArrayList.clear();
+                onGoingArrayList.addAll(dm.getOngoingDownloads());
+
+                notOnGoingArrayList.clear();
+                notOnGoingArrayList.addAll(dm.getNotOngoingDownloads());
+
+                sort(onGoingArrayList);
+
+                onGoingadapter.notifyDataSetChanged();
+                notOngoingAdapter.notifyDataSetChanged();
+            }
+        });
 
 
     }
 
-	@Override
+    private void sort(ArrayList<DownloadInfo> list) {
+
+
+        Collections.sort(list, new Comparator<DownloadInfo>() {
+            @Override
+            public int compare(DownloadInfo lhs, DownloadInfo rhs) {
+                return lhs.getStatusState().getEnumState().ordinal() - rhs.getStatusState().getEnumState().ordinal();  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
+
+
+    }
+
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
+
+
+
         BusProvider.getInstance().register(this);
         setContentView(R.layout.download_manager);
+        ViewPager vp = (ViewPager) findViewById(R.id.downloadManagerViewPager);
 
-        registerForContextMenu(getListView());
+        ArrayList<View> views = new ArrayList<View>();
+        onGoingList = new ListView(this);
+        notOngoingList = new ListView(this);
 
+        views.add(onGoingList);
+        views.add(notOngoingList);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this, views);
+        vp.setAdapter(adapter);
+        adapter.setTitles(new String[]{"Ongoing", "Not Ongoing"});
+        TitlePageIndicator pageIndicator = (TitlePageIndicator) findViewById(R.id.downloadManagerPageIndicator);
+        pageIndicator.setViewPager(vp);
+
+
+
+        registerForContextMenu(onGoingList);
+
+        notOngoingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((DownloadInfo)parent.getItemAtPosition(position)).download();
+            }
+        });
 
 //		if(!isRunning){
 //			isRunning = true;
 //
 //			if(!serviceManagerIsBound){
-	    		bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	    bindService(new Intent(this, ServiceManagerDownload.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
 //	    	}
 //
 //			setContentView(R.layout.download_manager);
@@ -349,10 +431,10 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
         switch (item.getItemId()){
 
             case 0:
-                ((DownloadInfo)getListAdapter().getItem(info.position)).pause();
+                onGoingadapter.getItem(info.position).pause();
                 break;
             case 1:
-                ((DownloadInfo)getListAdapter().getItem(info.position)).download();
+                onGoingadapter.getItem(info.position).download();
                 break;
 
         }
@@ -360,53 +442,143 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
         return super.onContextItemSelected(item);
     }
 
-    public class MyAdapter extends BaseAdapter {
 
 
-        private final ArrayList<DownloadInfo> list;
-        private final Context context;
+    public static class DownloadingRowViewHolder{
+        TextView app_name;
+        ImageView app_icon;
+        ProgressBar app_download_progress;
+        TextView app_progress;
+        TextView app_speed;
+        ImageView manageDownloadsButton;
+
+    }
+
+    public class MyAdapter extends ArrayAdapter<DownloadInfo> {
+
+
+        private final ActionItem playItem;
+        private final ActionItem pauseItem;
+        private final ActionItem stopItem;
+        private final ActionItem deleteItem;
 
         public MyAdapter(Context context, ArrayList<DownloadInfo> list) {
-            this.list = list;
-            this.context = context;
+            super(context, 0, list);
+            playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
+            pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
+            stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
+            deleteItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Clear", context.getResources().getDrawable(android.R.drawable.ic_delete));
+
         }
 
-
-        @Override
-        public int getCount() {
-            return list.size();  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
-        public DownloadInfo getItem(int position) {
-            return list.get(position);  //To change body of implemented methods use File | Settings | File Templates.
-        }
 
         @Override
         public long getItemId(int position) {
-            return list.get(position).getId();  //To change body of implemented methods use File | Settings | File Templates.
+            return getItem(position).getId();  //To change body of implemented methods use File | Settings | File Templates.
         }
+
+
+
+
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            TextView view;
-            if (convertView == null) {
-                view = new TextView(context);
-            } else {
-                view = (TextView) convertView;
+            DownloadingRowViewHolder rowViewHolder;
+
+            if(convertView == null){
+                convertView = getLayoutInflater().inflate(R.layout.row_app_downloading, null);
+                rowViewHolder = new DownloadingRowViewHolder();
+                rowViewHolder.app_name = (TextView) convertView.findViewById(R.id.downloading_name);
+                rowViewHolder.app_download_progress = (ProgressBar) convertView.findViewById(R.id.downloading_progress);
+                rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloading_icon);
+                rowViewHolder.app_progress = (TextView) convertView.findViewById(R.id.progress);
+                rowViewHolder.app_speed = (TextView) convertView.findViewById(R.id.speed);
+                rowViewHolder.manageDownloadsButton = (ImageView) convertView.findViewById(R.id.icon_manage);
+                convertView.setTag(rowViewHolder);
+            }else{
+                rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
             }
 
-            try {
-                DownloadInfo info = getItem(position);
-                view.setText(info.getStatusState().getEnumState() + " " + Utils.formatEta(info.getEta()) + " " + String.format("%.2f", info.getSpeed()/1000) + " KB/s" + " Progress:" + info.getPercentDownloaded());
-            } catch (ClassCastException e) {
-                Log.e("ArrayAdapter", "You must supply a resource ID for a TextView");
-                throw new IllegalStateException(
-                        "ArrayAdapter requires the resource ID to be a TextView", e);
+            final DownloadInfo download = getItem(position);
+
+            rowViewHolder.app_name.setText(download.getViewApk().getName()+"  "+download.getViewApk().getVername());
+            rowViewHolder.app_progress.setText(download.getPercentDownloaded() + "%");
+            rowViewHolder.app_speed.setText(download.getSpeed()/1000+ " KB/s");
+
+            switch (download.getStatusState().getEnumState()){
+                case ERROR:
+                    rowViewHolder.app_speed.setText("Error due to: " + download.getFailReason().toString(getContext()));
+                    break;
+                case COMPLETE:
+                    rowViewHolder.app_download_progress.setVisibility(View.GONE);
+                    break;
+                case PENDING:
+                    rowViewHolder.app_speed.setText("On Queue");
+                    break;
+                case INACTIVE:
+                    rowViewHolder.app_speed.setText("Paused");
+                    break;
             }
 
-            return view;  //To change body of implemented methods use File | Settings | File Templates.
+//            if(download.getProgress() != 0 && download.getProgress() < 99){
+//                rowViewHolder.app_download_progress.setIndeterminate(false);
+//                rowViewHolder.app_download_progress.setMax(100);
+//            }else{
+//                rowViewHolder.app_download_progress.setIndeterminate(true);
+//            }
+            rowViewHolder.app_download_progress.setProgress(download.getPercentDownloaded());
+            String iconUrl = download.getViewApk().getIcon();
+            ImageLoader.getInstance().displayImage(iconUrl, rowViewHolder.app_icon, (download.getViewApk().getApkid() + "|" + download.getViewApk().getVercode()));
+
+            rowViewHolder.manageDownloadsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    QuickAction actionBar  = new QuickAction(getContext());
+
+                    switch (download.getStatusState().getEnumState()) {
+
+                        case ACTIVE:
+                            actionBar.addActionItem(pauseItem);
+                            actionBar.addActionItem(stopItem);
+                            break;
+                        case COMPLETE:
+                            actionBar.addActionItem(deleteItem);
+                            break;
+                        default:
+                            actionBar.addActionItem(playItem);
+                            break;
+                    }
+
+                    actionBar.show(view);
+                    actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+                        @Override
+                        public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+                            switch (EnumQuickActions.reverseOrdinal(actionId)) {
+                                    case PLAY:
+                                        download.download();
+                                        break;
+
+                                    case PAUSE:
+                                        download.pause();
+                                        break;
+
+                                    case DELETE:
+                                    case STOP:
+                                        download.remove();
+                                        break;
+
+
+                                    default:
+                                        break;
+                            }
+                        }
+                    });
+
+                }
+            });
+
+            return convertView;
         }
     }
 
@@ -458,8 +630,9 @@ public class DownloadManager extends ListActivity /*SherlockActivity */{
 //		} catch (RemoteException e) {
 //			e.printStackTrace();
 //		}
-//		unbindService(serviceManagerConnection);
-		super.onDestroy();
+		unbindService(serviceManagerConnection);
+        BusProvider.getInstance().unregister(this);
+        super.onDestroy();
 	}
 
 

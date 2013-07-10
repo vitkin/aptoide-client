@@ -85,12 +85,11 @@ public class DownloadFile {
         return md5;
     }
 
-    public void checkMd5() throws Md5FailedException {
+    public synchronized void checkMd5() throws Md5FailedException {
 
         String md5 = getMd5();
 
         if(md5.length()>0){
-
 
             String calculatedMd5 = Md5Handler.md5Calc(new File(mDestination));
 

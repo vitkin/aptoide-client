@@ -82,7 +82,7 @@ public class DownloadThread implements Runnable {
             this.mRemainingSize = mConnection.connect(fileSize);
 
             Log.d("DownloadManager", "Starting Download " + (parent.getStatusState() instanceof ActiveState) + " "+this.mDownloadedSize+fileSize + " " +this.mRemainingSize);
-            byte[] bytes = new byte[8*1024];
+            byte[] bytes = new byte[1024];
             int bytesRead;
             BufferedInputStream mStream = mConnection.getStream();
             while ( (bytesRead = mStream.read(bytes)) != -1 &&
@@ -117,26 +117,19 @@ public class DownloadThread implements Runnable {
 
             mFullSize = mProgress = fileSize;
             mRemainingSize = 0;
-//            if(parent.getStatusState() instanceof ActiveState){
-//                try {
-//                    mDownloadFile.checkMd5();
-//                } catch (Md5FailedException e1) {
-//                    e1.printStackTrace();
-//                    mDownloadFile.delete();
-//                    parent.changeStatusState(new ErrorState(parent, EnumDownloadFailReason.MD5_CHECK_FAILED));
-//                }
-//            }
-//            parent.addAlreadyDownloadedSize(mRemainingSize);
 
             e.printStackTrace();
-        } finally {
-            if(mDownloadFile!=null){
-                mDownloadFile.close();
-            }
+        } catch (Exception e){
+            e.printStackTrace();
+            parent.changeStatusState(new ErrorState(parent, EnumDownloadFailReason.CONNECTION_ERROR));
+        }
 
-            if(mConnection!=null){
-                mConnection.close();
-            }
+        if(mDownloadFile!=null){
+            mDownloadFile.close();
+        }
+
+        if(mConnection!=null){
+            mConnection.close();
         }
 
 //        BusProvider.getInstance().post(parent);

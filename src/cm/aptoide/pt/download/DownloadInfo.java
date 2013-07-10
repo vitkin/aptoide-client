@@ -130,9 +130,9 @@ public class DownloadInfo implements Runnable{
 //                        mETA = 0;
 //                    }
 
-                    Log.d("DownloadManager", "ETA: " + mETA + " AvgSpeed: " + mAvgSpeed / 1000 + " RemainingSize: " + mReaminingSize + " Downloaded: " + mDownloadedSize + " Status: " + mStatusState.toString());
-                    Log.d("DownloadManager", "ETA: " + mETA + " Speed: " + mSpeed / 1000 + " Size: " + mSize + " Downloaded: " + mDownloadedSize + " Status: " + mStatusState.toString());
-                    Log.d("DownloadManager", threads.size() + " on queue.");
+//                    Log.d("DownloadManager", "ETA: " + mETA + " AvgSpeed: " + mAvgSpeed / 1000 + " RemainingSize: " + mReaminingSize + " Downloaded: " + mDownloadedSize + " Status: " + mStatusState.toString());
+//                    Log.d("DownloadManager", "ETA: " + mETA + " Speed: " + mSpeed / 1000 + " Size: " + mSize + " Downloaded: " + mDownloadedSize + " Status: " + mStatusState.toString());
+//                    Log.d("DownloadManager", threads.size() + " on queue.");
 
 //                    notifyListeners(new DownloadProgressEvent(DownloadInfo.this));
 
@@ -160,7 +160,6 @@ public class DownloadInfo implements Runnable{
             if(mStatusState instanceof ActiveState){
                 changeStatusState(new CompletedState(this));
                 autoExecute();
-                mFilesToDownload.clear();
             }
 
 
@@ -173,15 +172,14 @@ public class DownloadInfo implements Runnable{
         } catch (Exception e) {
             changeStatusState(new ErrorState(this, EnumDownloadFailReason.NO_REASON));
             e.printStackTrace();
-        } finally {
-            BusProvider.getInstance().post(DownloadInfo.this);
-            BusProvider.getInstance().post(new DownloadStatusEvent());
-
-            threads.clear();
-            mDownloadedSize = 0;
-            mSpeed = 0;
-            mETA = 0;
         }
+        BusProvider.getInstance().post(new DownloadStatusEvent());
+        BusProvider.getInstance().post(DownloadInfo.this);
+
+        threads.clear();
+        mDownloadedSize = 0;
+        mSpeed = 0;
+        mETA = 0;
 
 
     }
@@ -302,6 +300,7 @@ public class DownloadInfo implements Runnable{
         mProgress = 0;
         mSize=0;
         mFilesToDownload.clear();
+        BusProvider.getInstance().post(new DownloadStatusEvent());
         DownloadManager.INSTANCE.removeDownload(this);
     }
 
@@ -315,6 +314,7 @@ public class DownloadInfo implements Runnable{
     }
 
     public void download(){
+        mProgress = 0;
         this.mStatusState.download();
     }
 

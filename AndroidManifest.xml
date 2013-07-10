@@ -203,7 +203,8 @@
             android:configChanges="orientation|keyboardHidden" />
         <activity
             android:name=".DownloadManager"
-            android:configChanges="orientation|keyboardHidden" />
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".HWSpecActivity"
             android:configChanges="orientation|keyboardHidden" />

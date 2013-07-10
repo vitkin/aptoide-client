@@ -7,117 +7,134 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                xmlns:app="http://schemas.android.com/apk/res/cm.aptoide.pt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
-    <ListView
-            android:id="@android:id/list"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+    <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
+            android:id="@+id/downloadManagerPageIndicator"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            style="?attr/viewPagerIndicatorBackground"
+
+            app:footerColor="?attr/custom_color"
+            app:footerLineHeight="1dp"
+            app:selectedColor="?attr/custom_color"
             />
 
+    <android.support.v4.view.ViewPager
+            android:id="@+id/downloadManagerViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_below="@+id/downloadManagerPageIndicator"/>
+
+    <!--<ListView-->
+    <!--android:id="@android:id/list"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--/>-->
+
     <!--<LinearLayout-->
-        <!--android:id="@+id/linearLayout1"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:layout_above="@+id/exit"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:orientation="vertical" >-->
+    <!--android:id="@+id/linearLayout1"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:layout_above="@+id/exit"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:orientation="vertical" >-->
 
-        <!--<LinearLayout-->
-            <!--android:id="@+id/downloading_apps"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:orientation="vertical" >-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/downloading_apps"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:orientation="vertical" >-->
 
-            <!--<TextView-->
-                <!--android:id="@+id/downloading_intro"-->
-                <!--style="?attr/labelBackground"-->
-                <!--android:text="@string/downloading_apps" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/downloading_intro"-->
+    <!--style="?attr/labelBackground"-->
+    <!--android:text="@string/downloading_apps" />-->
 
-            <!--<LinearLayout-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical"-->
-                <!--android:padding="5dp" >-->
+    <!--<LinearLayout-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--android:padding="5dp" >-->
 
-                <!--<ListView-->
-                    <!--android:id="@android:id/list"-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="?attr/custom_inside_background_color" />-->
-            <!--</LinearLayout>-->
-        <!--</LinearLayout>-->
+    <!--<ListView-->
+    <!--android:id="@android:id/list"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="?attr/custom_inside_background_color" />-->
+    <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 
-        <!--<LinearLayout-->
-            <!--android:id="@+id/downloaded_apps"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:orientation="vertical" >-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/downloaded_apps"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:orientation="vertical" >-->
 
-            <!--<TextView-->
-                <!--android:id="@+id/downloaded_intro"-->
-                <!--style="?attr/labelBackground"-->
-                <!--android:text="@string/downloaded_apps" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/downloaded_intro"-->
+    <!--style="?attr/labelBackground"-->
+    <!--android:text="@string/downloaded_apps" />-->
 
-            <!--<LinearLayout-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical"-->
-                <!--android:padding="5dp" >-->
+    <!--<LinearLayout-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--android:padding="5dp" >-->
 
-                <!--<ListView-->
-                    <!--android:id="@+id/downloaded_list"-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="?attr/custom_inside_background_color" />-->
-            <!--</LinearLayout>-->
-        <!--</LinearLayout>-->
+    <!--<ListView-->
+    <!--android:id="@+id/downloaded_list"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="?attr/custom_inside_background_color" />-->
+    <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 
-        <!--<LinearLayout-->
-            <!--android:id="@+id/failed_apps"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:orientation="vertical" >-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/failed_apps"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:orientation="vertical" >-->
 
-            <!--<TextView-->
-                <!--android:id="@+id/failed_intro"-->
-                <!--style="?attr/labelBackground"-->
-                <!--android:text="@string/not_downloaded_apps" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/failed_intro"-->
+    <!--style="?attr/labelBackground"-->
+    <!--android:text="@string/not_downloaded_apps" />-->
 
-            <!--<LinearLayout-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical"-->
-                <!--android:padding="5dp" >-->
+    <!--<LinearLayout-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical"-->
+    <!--android:padding="5dp" >-->
 
-                <!--<ListView-->
-                    <!--android:id="@+id/failed_list"-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="match_parent"-->
-                    <!--android:background="?attr/custom_inside_background_color" />-->
-            <!--</LinearLayout>-->
-        <!--</LinearLayout>-->
+    <!--<ListView-->
+    <!--android:id="@+id/failed_list"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="?attr/custom_inside_background_color" />-->
+    <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
     <!--</LinearLayout>-->
 
     <!--<TextView-->
-        <!--android:id="@+id/no_downloads"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerInParent="true"-->
-        <!--android:layout_margin="5dp"-->
-        <!--android:text="@string/no_downloads"-->
-        <!--android:textAppearance="?android:attr/textAppearanceMedium" />-->
+    <!--android:id="@+id/no_downloads"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:text="@string/no_downloads"-->
+    <!--android:textAppearance="?android:attr/textAppearanceMedium" />-->
 
     <!--<Button-->
-        <!--android:id="@+id/exit"-->
-        <!--style="@style/gray_button_style"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:text="@string/back" />-->
+    <!--android:id="@+id/exit"-->
+    <!--style="@style/gray_button_style"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:text="@string/back" />-->
 
 </RelativeLayout><!--
  * Copyright (C) 2012  Duarte Silveira

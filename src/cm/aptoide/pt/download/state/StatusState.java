@@ -1,6 +1,8 @@
 package cm.aptoide.pt.download.state;
 
 import cm.aptoide.pt.download.DownloadInfo;
+import cm.aptoide.pt.download.event.DownloadStatusEvent;
+import cm.aptoide.pt.events.BusProvider;
 
 /**
  * A StatusState is a state in which a {@link DownloadInfo} can be and helps to perform some status specific actions.
@@ -60,6 +62,7 @@ public abstract class StatusState {
 	 * @param state The status state to change to.
 	 */
 	public void changeTo(StatusState state) {
+        BusProvider.getInstance().post(new DownloadStatusEvent());
 		if (state.changeTo()) {
 			changeFrom();
 //			DownloadStatusStateEvent event = new DownloadStatusStateEvent(mDownloadObject);

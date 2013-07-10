@@ -1043,9 +1043,9 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     }
                 });
                 findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-                handleUpdate(download);
                 serviceDownloadManager.startDownload(download, viewApk);
                 findViewById(R.id.btinstall).setOnClickListener(installListener);
+                handleUpdate(download);
 
 //                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
 //                findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);

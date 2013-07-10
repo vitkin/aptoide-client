@@ -8,5 +8,5 @@ package cm.aptoide.pt.download.state;
  * To change this template use File | Settings | File Templates.
  */
 public enum EnumState {
-    INACTIVE, ERROR, ACTIVE, COMPLETE, NOSTATE, PENDING
+    ACTIVE, INACTIVE, COMPLETE, NOSTATE, PENDING , ERROR
 }
