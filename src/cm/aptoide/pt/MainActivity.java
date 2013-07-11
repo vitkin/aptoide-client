@@ -1395,6 +1395,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 							@Override
 							public void run() {
+
 								pd.dismiss();
 								refreshAvailableList(false);
 							}
@@ -2363,10 +2364,10 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		}
         Log.d("TAAAG", ApplicationAptoide.isRestartLauncher()+" restartLauncher");
 
-        if(ApplicationAptoide.isRestartLauncher()){
-            ApplicationAptoide.restartLauncher(MainActivity.this);
-            ApplicationAptoide.setRestartLauncher(false);
-        }
+//        if(ApplicationAptoide.isRestartLauncher()){
+//            ApplicationAptoide.restartLauncher(MainActivity.this);
+//            ApplicationAptoide.setRestartLauncher(false);
+//        }
 
 
 		return super.onKeyDown(keyCode, event);
@@ -2496,7 +2497,10 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext).setView(credentialsDialogView).create();
 		credentialsDialog.setTitle(getString(R.string.add_private_store) + " "+ RepoUtils.split(string));
 		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(R.string.new_store), new UpdateStoreCredentialsListener(string, credentialsDialogView));
-		credentialsDialog.show();
+        if(!isFinishing()){
+            credentialsDialog.show();
+        }
+
 	}
 
 	ImageLoader loader;
@@ -2989,7 +2993,16 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		updateSelfDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				new DownloadSelfUpdate().execute();
+//				new DownloadSelfUpdate().execute();
+
+                ViewApk apk = new ViewApk();
+                apk.setName("Aptoide");
+                apk.setVername(updateParams.get("versionCode"));
+                apk.setMd5(updateParams.get("md5"));
+                apk.setPath(updateParams.get("uri"));
+                Toast.makeText(MainActivity.this, "Downlading Self-Update", Toast.LENGTH_LONG).show();
+                serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
+
 		    }
 		});
 		updateSelfDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {

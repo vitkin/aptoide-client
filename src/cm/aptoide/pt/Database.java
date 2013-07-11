@@ -790,7 +790,7 @@ public class Database {
 				server = new Server(c.getString(1), c.getString(2),
 						c.getLong(0));
 				server.state = State.valueOf(c.getString(3));
-				ViewLogin login = new ViewLogin(c.getString(3), c.getString(4));
+				ViewLogin login = new ViewLogin(c.getString(4), c.getString(5));
 				server.setLogin(login);
 			}
 
@@ -1686,6 +1686,7 @@ public class Database {
             apk.setMalwareStatus(getMalware(apk,category));
             setMainObb(apk,category);
             setPatchObb(apk,category);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

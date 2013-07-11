@@ -116,7 +116,8 @@ public class MainService extends Service {
 			hash = "?hash=" + server.hash;
 		}
 		NetworkUtils utils = new NetworkUtils();
-		if(delta&&utils.checkServerConnection(server.url, server.getLogin().getUsername(),server.getLogin().getPassword())==401){
+        Log.d("TAG", server.url + " " + server.getLogin().getUsername() + " " + server.getLogin().getPassword());
+		if(delta && utils.checkServerConnection(server.url, server.getLogin().getUsername(),server.getLogin().getPassword())==401){
 			throw new AptoideException("401", new IOException());
 		}
 		String url = server.url + what + hash;
@@ -203,16 +204,33 @@ public class MainService extends Service {
 		return isParsing ;
 	}
 
-	@Override
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.d("TAG", "Removing files");
+        try{
+            File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles();
+
+            for(File file : files){
+                if(file.getName().contains(".xml")&&!file.getName().contains("servers.xml")){
+                    file.delete();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
 	public void onDestroy() {
 		unregisterReceiver(receiver);
 		unregisterReceiver(parseCompletedReceiver);
-		System.out.println("MainService OnDestroy");
 		try{
 			File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles();
 
 			for(File file : files){
-				if(file.getName().endsWith(".xml")&&!file.getName().contains("servers.xml")){
+				if(file.getName().contains(".xml")&&!file.getName().contains("servers.xml")){
 					file.delete();
 				}
 			}
@@ -509,6 +527,8 @@ public class MainService extends Service {
 
 
 	}
+
+
 	public static String withSuffix(String input) {
 		long count = Long.parseLong(input);
 	    if (count < 1000) return "" + count;

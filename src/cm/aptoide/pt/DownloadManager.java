@@ -19,13 +19,8 @@
 */
 package cm.aptoide.pt;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.content.DialogInterface.OnDismissListener;
-import android.graphics.Color;
 import android.os.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -512,40 +507,45 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
             rowViewHolder.app_name.setText(download.getViewApk().getName()+"  "+download.getViewApk().getVername());
             rowViewHolder.app_progress.setText(download.getPercentDownloaded() + "%");
-            
-            rowViewHolder.app_eta.setText(Utils.formatEta(download.getEta())+" "+getString(R.string.time_left));
-            
+
+            rowViewHolder.app_eta.setText(Utils.formatEta(download.getEta(), getString(R.string.time_left)));
+
             if(download.getPercentDownloaded()==0){
             	 rowViewHolder.app_download_progress.setIndeterminate(true);
             	 rowViewHolder.app_speed.setText(R.string.starting);
              }else{
             	 rowViewHolder.app_download_progress.setIndeterminate(false);
-            	 rowViewHolder.app_speed.setText(Utils.formatBytes((long)download.getSpeed()) + "/s ");
+            	 rowViewHolder.app_speed.setText(Utils.formatBits((long) download.getSpeed()) + "ps ");
             }
-            
+
             switch (download.getStatusState().getEnumState()){
                 case ERROR:
                     rowViewHolder.app_speed.setText(getString(R.string.download_failed_due_to) +": "+ download.getFailReason().toString(getContext()));
-                    
+
                     rowViewHolder.app_progress.setVisibility(View.GONE);
                     rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case COMPLETE:
                 	rowViewHolder.app_speed.setText(getString(R.string.completed));
-                	
+
                     rowViewHolder.app_download_progress.setVisibility(View.GONE);
                     rowViewHolder.app_progress.setVisibility(View.GONE);
                     rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case PENDING:
                     rowViewHolder.app_speed.setText(getString(R.string.waiting));
-                    
+
                     rowViewHolder.app_eta.setVisibility(View.GONE);
                     break;
                 case INACTIVE:
                     rowViewHolder.app_speed.setText(getString(R.string.paused));
-                    
+
                     rowViewHolder.app_eta.setVisibility(View.GONE);
+                    break;
+                case ACTIVE:
+                    rowViewHolder.app_eta.setVisibility(View.VISIBLE);
+                    rowViewHolder.app_progress.setVisibility(View.VISIBLE);
+                    rowViewHolder.app_download_progress.setVisibility(View.VISIBLE);
                     break;
             }
 
@@ -570,6 +570,9 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
                     	actionBar.addActionItem(pauseItem);
                     	actionBar.addActionItem(stopItem);
                     	break;
+                    case PENDING:
+                        actionBar.addActionItem(stopItem);
+                        break;
                     case COMPLETE:
                     	actionBar.addActionItem(deleteItem);
                     	actionBar.addActionItem(shareItem);
@@ -609,10 +612,10 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
                             }
                         }
 
-						
-							
-							
-						
+
+
+
+
                     });
 
                 }

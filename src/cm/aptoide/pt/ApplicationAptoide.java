@@ -399,18 +399,21 @@ public class ApplicationAptoide extends Application {
 
 
 
-        managerPreferences = new ManagerPreferences(getApplicationContext());
 
 
         try {
 
             if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
-                new ManagerPreferences(this).removePreviousShortcuts(this, false);
-                new ManagerPreferences(this).removePreviousShortcuts(this, true);
+                ManagerPreferences.removePreviousShortcuts(this, false);
+                ManagerPreferences.removePreviousShortcuts(this, true);
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+
+
+        managerPreferences = new ManagerPreferences(getApplicationContext());
 
 
 

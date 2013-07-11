@@ -52,8 +52,8 @@ public class ManagerPreferences{
             setPreferences = getPreferences.edit();
             Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
             if(getAptoideClientUUID() == null){
-    //			createLauncherShortcut(context);
-            	
+    			createLauncherShortcut(context);
+
                 setAptoideClientUUID( UUID.randomUUID().toString() );
                 try {
                     setAptoideVersionName(context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName);
@@ -97,7 +97,7 @@ public class ManagerPreferences{
         }
 
 
-        public void removePreviousShortcuts(Context context, boolean brand) {
+        public static void removePreviousShortcuts(Context context, boolean brand) {
 
             final Intent intent = new Intent();
             Log.d("ManagerPreferences", "Removing Icon");

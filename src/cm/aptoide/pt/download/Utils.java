@@ -12,7 +12,7 @@ import java.util.Locale;
 public class Utils {
 
 
-     public static String formatEta(long eta){
+     public static String formatEta(long eta, String left){
 
         if (eta > 0) {
             long days = eta / (1000 * 60 * 60 * 24);
@@ -38,18 +38,26 @@ public class Utils {
             }
 
 
-            return etaString;
+            return etaString + " " + left;
         }
         return "";
     }
-     
-     public static String formatBytes(long bytes) {
+
+     public static String formatBits(long bytes) {
          int unit = 1024;
          if (bytes < unit) return bytes + " B";
          int exp = (int) (Math.log(bytes) / Math.log(unit));
          String pre = ("KMGTPE").charAt(exp-1)+"";
-         return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+         return String.format(Locale.ENGLISH, "%.1f %sb", bytes / Math.pow(unit, exp), pre);
      }
+
+    public static String formatBytes(long bytes) {
+        int unit = 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = ("KMGTPE").charAt(exp-1)+"";
+        return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
 
 }
 

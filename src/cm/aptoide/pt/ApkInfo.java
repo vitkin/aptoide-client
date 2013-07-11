@@ -401,11 +401,12 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     ((RatingBar) findViewById(R.id.ratingbar)).setRating(Float.parseFloat(viewApk.getRating()));
                     ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 } catch (Exception e) {
+                    Log.d("TAG", "Unable to parse " + viewApk.getRating());
                     ((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
                     ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 }
                 ((TextView) findViewById(R.id.app_store)).setText(getString(R.string.store)+": " +repo_string);
-                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ Utils.formatBytes((Long.parseLong(viewApk.getSize())*1024+mainObbSize+patchObbSize)));
+                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ Utils.formatBytes((Long.parseLong(viewApk.getSize()) * 1024 + mainObbSize + patchObbSize)));
                 ((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
                 ((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 //                ((TextView) findViewById(R.id.app_category)).setText(viewApk.getCategory1());
@@ -1140,13 +1141,13 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         ProgressBar progress;
         Log.d("handleUpdate-Enum", download.getStatusState().getEnumState().name()+"");
         switch (download.getStatusState().getEnumState()) {
-        	
+
             case INACTIVE:
                progress = (ProgressBar) findViewById(R.id.downloading_progress);
                progress.setIndeterminate(false);
                progress.setProgress(download.getPercentDownloaded());
-               
-               ((TextView) findViewById(R.id.speed)).setText(Utils.formatBytes((long)download.getSpeed()) + "/s - " + Utils.formatEta(download.getEta()) + " " + getString(R.string.time_left));
+
+               ((TextView) findViewById(R.id.speed)).setText(getString(R.string.paused));
                ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 //             ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
                ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
@@ -1163,15 +1164,15 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 //                    break;
             case ACTIVE:
                 progress = (ProgressBar) findViewById(R.id.downloading_progress);
-                
+
                 if(download.getPercentDownloaded()==0){
              	   progress.setIndeterminate(true);
              	   ((TextView) findViewById(R.id.speed)).setText(R.string.starting);
                 }else{
                 	 progress.setIndeterminate(false);
-                    ((TextView) findViewById(R.id.speed)).setText(Utils.formatBytes((long)download.getSpeed()) + "/s - " + Utils.formatEta(download.getEta()) + " " + getString(R.string.time_left));
+                    ((TextView) findViewById(R.id.speed)).setText(Utils.formatBits((long) download.getSpeed()) + "ps - " + Utils.formatEta(download.getEta(), getString(R.string.time_left)));
                 }
-                
+
                 progress.setProgress(download.getPercentDownloaded());
                 findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
                 findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
@@ -1189,7 +1190,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 //                    findViewById(R.id.btinstall).setOnClickListener(installListener);
 //                break;
 
-//            case PENDING:
+            case PENDING:
+                ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+                ((TextView) findViewById(R.id.speed)).setText(getString(R.string.waiting));
+                break;
             case ERROR:
                 if(download.getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
                     new DialogIpBlacklisted(ApkInfo.this).show();
@@ -1421,7 +1425,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
 
                     }
-                    ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ Utils.formatBytes((Long.parseLong(viewApk.getSize())*1024+mainObbSize+patchObbSize)));
+                    ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ Utils.formatBytes((Long.parseLong(viewApk.getSize()) * 1024 + mainObbSize + patchObbSize)));
 
                     viewApk.setMainObbUrl(mainObbUrl);
                     viewApk.setMainObbFileName(mainObbName);

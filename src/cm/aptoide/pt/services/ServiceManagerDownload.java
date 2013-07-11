@@ -29,11 +29,12 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ServiceManagerDownload extends Service {
-    private static final String DEFAULT_APK_DESTINATION = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.aptoide/";
+    private static final String DEFAULT_APK_DESTINATION = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.aptoide/apks/";
     private static final String OBB_DESTINATION = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/obb/";
     private NotificationManager managerNotification;
     private Collection<DownloadInfo> ongoingDownloads;
-
+    private boolean showNotification = false;
+    private NotificationCompat.Builder mBuilder;
 
 
     @Override
@@ -109,9 +110,11 @@ public class ServiceManagerDownload extends Service {
 
     @Subscribe public void updateDownload(DownloadInfo id){
         ongoingDownloads = getOngoingDownloads();
-
+        if(!showNotification){
+            mBuilder = setNotification();
+        }
         if(!ongoingDownloads.isEmpty()){
-            setNotification();
+            updateProgress(mBuilder);
         }else{
             dismissNotification();
         }
@@ -121,6 +124,7 @@ public class ServiceManagerDownload extends Service {
     private synchronized void dismissNotification(){
         try {
             managerNotification.cancel(this.hashCode());
+            showNotification = false;
         } catch (Exception e) { }
     }
 
@@ -138,7 +142,7 @@ public class ServiceManagerDownload extends Service {
         super.onDestroy();
     }
 
-    private void setNotification() {
+    private NotificationCompat.Builder setNotification() {
 
         managerNotification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
@@ -155,11 +159,18 @@ public class ServiceManagerDownload extends Service {
                 .setContentText(getString(R.string.x_app, ongoingDownloads.size()))
                 .setSmallIcon(android.R.drawable.stat_sys_download);
         mBuilder.setContentIntent(onClickAction);
+
+        updateProgress(mBuilder);
+        return mBuilder;
+    }
+
+    private void updateProgress(NotificationCompat.Builder mBuilder) {
         int percentage = getOngoingDownloadsPercentage();
         mBuilder.setProgress(100, percentage, percentage == 0);
         // Displays the progress bar for the first time
-        managerNotification.notify(this.hashCode(), mBuilder.build());
 
+
+        managerNotification.notify(this.hashCode(), mBuilder.build());
     }
 
 

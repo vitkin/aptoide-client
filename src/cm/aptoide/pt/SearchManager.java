@@ -77,6 +77,7 @@ public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentAct
 
 			public void onClick(View v) {
 				String url = "http://m.aptoide.com/searchview.php?search="+query;
+
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				startActivity(i);
