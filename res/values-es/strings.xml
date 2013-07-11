@@ -10,7 +10,7 @@
   <string name="menu_context_reparse">Actualizar</string>
   <string name="preparing_to_load">Preparando para cargar, espera por favor…</string>
   <string name="store_beginning_to_load">Preparando para iniciar la carga, espera por favor…</string>
-  <string name="start_loading">Cargando...</string>
+  <string name="start_loading">Cargando…</string>
   <string name="loading_failed">Fallo durante la carga, vuelve a intentarlo por favor…</string>
   <string name="loading_store">Actualizando</string>
   <string name="error_latest_apk">No hay APK\'s disponibles en esta base de datos. ¿Siguen cargando los repositorios?</string>
@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">Descargas programadas</string>
   <string name="exclude_update">Ignorar actualización</string>
   <string name="restore_updates">Restaurar actualizaciones</string>
+  <string name="added_to_excluded_updates_list">%s ha sido excluido de la lista de Actualizaciones</string>
   <string name="remove_from_excluded_updates_list">Eliminar de la lista de actualizaciones excluidas</string>
+  <string name="add_to_excluded_updates_list">Esta aplicación ha sido eliminada de la lista de Actualizaciones</string>
   <string name="excluded_updates">Actualizaciones excluidas</string>
   <string name="no_excluded_updates">Sin actualizaciones excluidas</string>
   <string name="no_excluded_updates_selected">Sin Actualizaciones Excluidos seleccionadas</string>
@@ -71,7 +73,7 @@
   <string name="extended_server">Repositorio extendido</string>
   <string name="btn_add_repo">Nuevo repositorio</string>
   <string name="number_apks">Aplicaciones:</string>
-  <string name="please_wait">Por favor, espera...</string>
+  <string name="please_wait">Por favor, espera…</string>
   <string name="search_market">Buscar en el Market</string>
   <string name="status">Estado</string>
   <string name="details">Detalles</string>
@@ -109,13 +111,13 @@
   <string name="add_comment">Añadir comentario</string>
   <string name="postingcomment">Publicando tu comentario…</string>
   <string name="commentadded">Tu comentario ha sido publicado con éxito</string>
-  <string name="order_popup_title1">Ordenar aplicaciones por:</string>
+  <string name="order_popup_title1">Ordenar aplicaciones por</string>
   <string name="order_popup_lst1">Más reciente primero</string>
   <string name="order_popup_lst2">Alfabético</string>
   <string name="order_popup_lst3">Puntuación</string>
   <string name="order_popup_lst4">Número de descargas</string>
   <string name="order_popup_lst5">Precio</string>
-  <string name="order_popup_title2">Mostrar aplicaciones:</string>
+  <string name="order_popup_title2">Mostrar aplicaciones</string>
   <string name="order_popup_title3">Contenido para adultos</string>
   <string name="are_you_adult">¿Tienes por lo menos 21 años?</string>
   <string name="order_popup_catg1">Por categoría</string>
@@ -151,10 +153,11 @@
   <string name="adult_content">Contenido para adultos</string>
   <string name="stores">Tiendas</string>
   <string name="screenshots">Capturas de pantalla</string>
+  <string name="about">Descripción</string>
   <string name="rate_this_app">Califica esta aplicación</string>
   <string name="related_apps">Aplicaciones relacionadas</string>
   <string name="recommended_apps">Aplicaciones recomendadas</string>
-  <string name="recommended_text">Inicia sesión para ver las mejores aplicaciones para usted</string>
+  <string name="recommended_text">Inicia sesión para ver las mejores aplicaciones para ti</string>
   <string name="you_need_to_login">Necesitas hacer login para ver las aplicaciones recomendadas para ti</string>
   <string name="you_need_to_login_toast">Necesitas hacer login</string>
   <string name="no_recommended_apps">No hay aplicaciones recomendadas</string>
@@ -165,9 +168,10 @@
   <string name="menu_rem_repo">Eliminar repositorio</string>
   <string name="menu_edit_repo">Editar repositorio</string>
   <string name="btn_chlog">Historial</string>
+  <string name="btn_search_market">Buscar en otros Repositorios</string>
   <string name="no_results_found">Sin resultados</string>
   <string name="found">Encontrado</string>
-  <string name="results">Resultado(s)</string>
+  <string name="results">resultado(s)</string>
   <string name="schDwnBtn">Descargas programadas</string>
   <string name="search_log">Buscar</string>
   <string name="search_stores">en otros Repositorios</string>
@@ -178,6 +182,7 @@
   <string name="update_done_msg1">Repositorios actualizados con éxito.</string>
   <string name="about_site">Inicio:</string>
   <string name="about_mail">Contacto:</string>
+  <string name="about_us">Equipo Aptoide</string>
   <string name="app_trusted">%s es de Confianza</string>
   <string name="app_warning">%s es Peligrosa</string>
   <string name="app_unknown">%s es Desconocida</string>
@@ -196,12 +201,12 @@
   <string name="md5_auto_update_error">¡Suma de comprobación de la actualización del paquete fallida! Manteniendo versión actual.</string>
   <string name="network_auto_update_error">¡Conexión de la actualización fallida! Manteniendo versión actual.</string>
   <string name="aptoide_update">Actualizar</string>
-  <string name="auto_updating">Por favor espera mientras se procesa la descarga de la actualización...</string>
+  <string name="auto_updating">Por favor, espera mientras se procesa la descarga de la actualización…</string>
   <string name="update_self_title">Actualización disponible</string>
   <string name="update_self_msg">Hay una nueva versión de aptoide disponible,\n¿Desea actualizarla?</string>
   <string name="md5_error">¡El chequeo md5 de la aplicación descargada falló!\nPor favor actualiza tus repositorios antes de reintentarlo.</string>
   <string name="network_error">Ha habido un error cuando se ha reclamado la aplicación.\nPor favor inténtalo de nuevo.</string>
-  <string name="error_404">El archivo no se encontró en la tienda determinada.\nPor favor, inténtelo de nuevo más tarde.\n</string>
+  <string name="error_404">El archivo no ha sido encontrado en el repositorio./nPor favor, vuelve a intentarlo más tarde.</string>
   <string name="parse_error">¡Error de carga!</string>
   <string name="parse_error_loading">Hubo un problema al cargar tu tienda.Deseas intentarlo nuevamente?</string>
   <string name="newrepo_alrt">¿Quieres añadir este repositorio a la lista?\n\n</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">No se puede conectar al servidor remoto. Por favor, verifica tu conexión a internet.</string>
   <string name="no_sch_downloads">¡No hay descargas programadas!</string>
   <string name="size">Tamaño</string>
+  <string name="installed_version">Versión instalada</string>
   <string name="schDown_install">¿Deseas instalar todas las descargas programadas?</string>
   <string name="schDown_installselected">Instalar seleccionado</string>
   <string name="schDown_wireless_detected">Detectado Wifi: Descargar todas las aplicaciones programadas?</string>
@@ -260,7 +266,7 @@
   <string name="download_failed_due_to">Descargar fallado debido a</string>
   <string name="timeout">espera de conexión de red</string>
   <string name="ip_blacklisted">Lista negra de IP</string>
-  <string name="ip_blacklisted_extended">"La aplicación no pudo ser recuperada. Tu IP está en la lista negra en los servidores de Aproide. Para resolver este problema, por favor, contacta con  "<a href="mailto:ipblacklist@aptoide.com">ipblacklist\@aptoide.com</a></string>
+  <string name="ip_blacklisted_extended">"La aplicación no pudo ser recuperada. Tu IP está en la lista negra en los servidores de Aptoide. Para resolver este problema, por favor, contacta con "<a href="mailto:ipblacklist@aptoide.com">ipblacklist\@aptoide.com</a></string>
   <string name="connection_error">sin conexión de red</string>
   <string name="apk_not_found">Apk no encontrada</string>
   <string name="invalid_apk">Apk invalida</string>
@@ -286,7 +292,7 @@
   <string name="loading_facebook">Cargando Facebook…</string>
   <string name="loading_twitter">Cargando Twitter…</string>
   <string name="facebook_downloaded_to_install">¡Descargué %s para Android para instalarla en mi móvil!</string>
-  <string name="social_network_intro">Su opinión es importante. Usted puede encontrarnos en Facebook y / o síguenos en Twitter.</string>
+  <string name="social_network_intro">Tu opinión es importante. Puedes encontrarnos en Facebook y/o seguirnos en Twitter.</string>
   <string name="find_us_on_facebook">Encontrarnos en Facebook</string>
   <string name="follow_twitter">Síguenos en Twitter</string>
   <string name="social_networks">Redes sociales</string>
@@ -306,7 +312,7 @@
   <string name="version_info">Información de la Versión</string>
   <string name="payment_method">Método de Pago</string>
   <string name="payment_warning_text">No pudimos comprobar el precio de este producto. El precio puede haber cambiado. Por favor, confirma los precios PayPal antes de pagar.</string>
-  <string name="payment_warning_title">Precaución</string>
+  <string name="payment_warning_title">¡Atención!</string>
   <string name="buy">Comprar</string>
   <string name="applications">Aplicaciones</string>
   <string name="comics">Cómics</string>
@@ -360,4 +366,16 @@
   <string name="warning">Precaución</string>
   <string name="unknown">Desconocido</string>
   <string name="error_no_market">¡No tienes Google Play instalado!</string>
+  <string name="crash_notif_ticker_text">Error inesperado, por favor, manda un reporte...</string>
+  <string name="crash_notif_text">Por favor, clica aquí para ayudarnos a corregir este error.</string>
+  <string name="crash_dialog_title">Aptoide se ha roto</string>
+  <string name="crash_dialog_text">Un error inesperado ha ocurrido obligando a la aplicación a cerrarse. Por favor, ayúdanos a solucionar este error enviándonos un reporte.</string>
+  <string name="crash_dialog_comment_prompt">Por favor, añade los comentarios sobre el error aquí abajo:</string>
+  <string name="crash_dialog_ok_toast">¡ Muchas gracias !</string>
+  <string name="finished_install">%s se ha instalado satisfactoriamente.</string>
+  <string name="installing">%s se está instalando...</string>
+  <string name="new_updates">¡Hay %s nuevas actualizaciones disponibles!</string>
+  <string name="one_new_update">¡Hay %s actualización disponible!</string>
+  <string name="has_updates">¡%s tiene nuevas actualizaciones disponibles!</string>
+  <string name="powered_by">Impulsado por</string>
 </resources>

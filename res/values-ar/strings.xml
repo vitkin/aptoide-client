@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">جدولة التحميل</string>
   <string name="exclude_update">تجاهل التحديث</string>
   <string name="restore_updates">استعادة التحديثات</string>
+  <string name="added_to_excluded_updates_list">%s استبعد من التحديثات</string>
   <string name="remove_from_excluded_updates_list">"حذف من قائمة التحديثات المستبعدة "</string>
+  <string name="add_to_excluded_updates_list">تمت إزالة هذا التطبيق من التحديثات</string>
   <string name="excluded_updates">التحديثات المستبعدة</string>
   <string name="no_excluded_updates">لا يوجد تحديثات مستبعدة</string>
   <string name="no_excluded_updates_selected">لم يتم اختيار اي من التحديثات المستبعدة</string>
@@ -151,6 +153,7 @@
   <string name="adult_content">محتوى للكبار فقط</string>
   <string name="stores">المتاجر</string>
   <string name="screenshots">لقطات</string>
+  <string name="about">الوصف</string>
   <string name="rate_this_app">قيِّم هذا التطبيق</string>
   <string name="related_apps">تطبيقات ذات صلة</string>
   <string name="recommended_apps">التطبيقات الموصى بها</string>
@@ -165,6 +168,7 @@
   <string name="menu_rem_repo">حذف المتجر</string>
   <string name="menu_edit_repo">تعديل المتجر</string>
   <string name="btn_chlog">التغيير</string>
+  <string name="btn_search_market">أبحث الأسواق الأخرى</string>
   <string name="no_results_found">لا توجد نتائج</string>
   <string name="found">موجود</string>
   <string name="results">النتائج</string>
@@ -178,8 +182,9 @@
   <string name="update_done_msg1">تم تحديث المتاجر بنجاح</string>
   <string name="about_site">الرئيسيه:</string>
   <string name="about_mail">الإتصال:</string>
+  <string name="about_us">من نحن</string>
   <string name="app_trusted">%s البرنامج موثوق به</string>
-  <string name="app_warning">%s تطبيق مشكوك فيه</string>
+  <string name="app_warning">%s تطبيق به خطر</string>
   <string name="app_unknown">%s التطبيق غير معروف</string>
   <string name="signature_verified">توقيع التطبيق مطابق لتوقيع المطور.</string>
   <string name="signature_not_verified">توقيع التطبيق لا يتطابق مع توقيع المطور، وبالتالي فإن التطبيق قد يكون مغشوشا.</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">لايمكن الإتصال بالخادم البعيد . الرجاء التحقق من إتصالك بالإنترنت</string>
   <string name="no_sch_downloads">لا يوجد تحميلات مجدولة!</string>
   <string name="size">الحجم</string>
+  <string name="installed_version">الإصدار المثبت</string>
   <string name="schDown_install">هل تريد تثبيت كل التحميلات المجدولة؟</string>
   <string name="schDown_installselected">تثبيت المختار</string>
   <string name="schDown_wireless_detected">تم ايجاد الوايرليس. تحميل كل التطبيقات في التحميلات المجدولة؟</string>
@@ -306,7 +312,7 @@
   <string name="version_info">معلومات النسخة</string>
   <string name="payment_method">طريقة الدفع</string>
   <string name="payment_warning_text">لم نتمكن من التحقق من قيمة المنتوج.يمكن أن يكون السعر قد تغير.الرجاء التأكد من أسعار بايبال قبل الدفع.</string>
-  <string name="payment_warning_title">تحذير</string>
+  <string name="payment_warning_title">تحذير!</string>
   <string name="buy">شراء</string>
   <string name="applications">تطبيقات</string>
   <string name="comics">كرتون</string>
@@ -345,7 +351,7 @@
   <string name="games">ألعاب</string>
   <string name="arcade_and_action">أروقة و قتال</string>
   <string name="brain_and_puzzle">تفكير و ذكاء</string>
-  <string name="cards_and_casino">كروت و كازينو</string>
+  <string name="cards_and_casino">بطاقات و كازينو</string>
   <string name="casual">عادية</string>
   <string name="sport_games">ألعاب رياضية</string>
   <string name="racing">سباقات</string>
@@ -360,4 +366,16 @@
   <string name="warning">تحذير</string>
   <string name="unknown">غير معروف</string>
   <string name="error_no_market">انت لم تثبت سوق قوقل</string>
+  <string name="crash_notif_ticker_text">خطأ غير متوقع، الرجاء ارسال تقرير...</string>
+  <string name="crash_notif_text">الرجاء الضغط هنا للمساعدة لحل هذه المشكلة.</string>
+  <string name="crash_dialog_title">أبتويد تعطل</string>
+  <string name="crash_dialog_text">"حدث خطأ غير متوقع مما اضطر لوقف تطبيق. الرجاء مساعدتنا لإصلاحه بواسطة  ارسال بيانات الخطأ لنا،  كل ما عليك القيام به هو انقر فوق موافق."</string>
+  <string name="crash_dialog_comment_prompt">يمكنك إضافة تعليقاتك حول المشكلة أدناه:</string>
+  <string name="crash_dialog_ok_toast">شكراً لك!</string>
+  <string name="finished_install">%s تم تثبيته</string>
+  <string name="installing">%s يتم التثبيت</string>
+  <string name="new_updates">توجد %s تحديثات جديدة!</string>
+  <string name="one_new_update">هنالك %s تحديثات جديدة متوفرة!</string>
+  <string name="has_updates">%s لديه تحديث(ات) متوفرة!</string>
+  <string name="powered_by">مدعوم من</string>
 </resources>

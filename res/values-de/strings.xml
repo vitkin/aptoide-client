@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">Geplanter Download</string>
   <string name="exclude_update">Update ignorieren</string>
   <string name="restore_updates">Updates wiederherstellen</string>
+  <string name="added_to_excluded_updates_list">%s wurde von Updates ausgeschlossen</string>
   <string name="remove_from_excluded_updates_list">Entferne von der ausgeschlossenen Update-Liste</string>
+  <string name="add_to_excluded_updates_list">Diese App wurde von Updates entfernt</string>
   <string name="excluded_updates">Ausgeschlossene Updates</string>
   <string name="no_excluded_updates">Keine ausgeschlossenen Updates</string>
   <string name="no_excluded_updates_selected">Keine ausgeschlossenen Updates ausgewählt</string>
@@ -151,6 +153,7 @@
   <string name="adult_content">Erwachseneninhalte</string>
   <string name="stores">Stores</string>
   <string name="screenshots">Screenshots</string>
+  <string name="about">Beschreibung</string>
   <string name="rate_this_app">App bewerten</string>
   <string name="related_apps">Ähnliche Apps</string>
   <string name="recommended_apps">Empfohlene Apps</string>
@@ -165,6 +168,7 @@
   <string name="menu_rem_repo">Store entfernen</string>
   <string name="menu_edit_repo">Bearbeite Store</string>
   <string name="btn_chlog">Changelog</string>
+  <string name="btn_search_market">Suche andere Märkte</string>
   <string name="no_results_found">Keine Ergebnisse gefunden</string>
   <string name="found">Gefunden</string>
   <string name="results">ergebnis(se)</string>
@@ -178,6 +182,7 @@
   <string name="update_done_msg1">Stores erfolgreich geupdatet.</string>
   <string name="about_site">Home:</string>
   <string name="about_mail">Kontakt:</string>
+  <string name="about_us">Über uns</string>
   <string name="app_trusted">%s Anwendung ist Vertrauenswürdig</string>
   <string name="app_warning">%s Anwendung ist zu warnen!</string>
   <string name="app_unknown">%s Anwendung ist Unbekannt</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">Kann nicht zum Remote-Server verbinden. Bitte überprüfen Sie Ihre Internetverbindung.</string>
   <string name="no_sch_downloads">Keine geplanten Downloads!</string>
   <string name="size">Größe</string>
+  <string name="installed_version">Installierte Version</string>
   <string name="schDown_install">Alle geplanten Downloads installieren?</string>
   <string name="schDown_installselected">Auswahl installieren</string>
   <string name="schDown_wireless_detected">Wireless erkannt: Alle geplanten Downloads herunterladen?</string>
@@ -268,7 +274,7 @@
   <string name="back">Zurück</string>
   <string name="contact">Kontakt</string>
   <string name="choose_email_client">Wähle einen Email Client:</string>
-  <string name="refresh_list">Erneuern</string>
+  <string name="refresh_list">Aktualisieren</string>
   <string name="update_all">Alle updaten</string>
   <string name="update_to">Update zu</string>
   <string name="want_to_share">%s wird nicht ohne deine Genehmigung posten. Wir respektieren Ihre Privatsphäre. Wollen Sie die folgende Meldung teilen?</string>
@@ -360,4 +366,16 @@
   <string name="warning">Warnung</string>
   <string name="unknown">Unbekannt</string>
   <string name="error_no_market">Sie haben Google Play nicht installiert!</string>
+  <string name="crash_notif_ticker_text">Unerwarteter Fehler, schicken Sie bitte einen Bericht ...</string>
+  <string name="crash_notif_text">Bitte klicken Sie hier, um zu helfen das Problem zu beheben.</string>
+  <string name="crash_dialog_title">Aptoide ist abgestürzt</string>
+  <string name="crash_dialog_text">Ein unerwarteter Fehler ist aufgetreten und zwingt die Anwendung zu beenden. Bitte helfen Sie uns dieses Problem zu beheben, indem Sie uns Fehler-Daten senden, alles was Sie tun müssen, ist klicken Sie auf OK.</string>
+  <string name="crash_dialog_comment_prompt">Sie können Ihre Kommentare über das Problem unten hinzufügen:</string>
+  <string name="crash_dialog_ok_toast">Danke !</string>
+  <string name="finished_install">%s wurde installiert.</string>
+  <string name="installing">%s wird installiert...</string>
+  <string name="new_updates">Es sind %s neue Updates verfügbar!</string>
+  <string name="one_new_update">Es ist %s neues Update verfügbar!</string>
+  <string name="has_updates">%s hat neue Update(s) verfügbar!</string>
+  <string name="powered_by">Präsentiert von</string>
 </resources>

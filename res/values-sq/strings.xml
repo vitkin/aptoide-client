@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">Planifiko Shkarkimin</string>
   <string name="exclude_update">Injoro Azhornimin</string>
   <string name="restore_updates">Rikthe Azhornimin</string>
+  <string name="added_to_excluded_updates_list">%s u përjashtua nga Azhornimet</string>
   <string name="remove_from_excluded_updates_list">Hiq nga lista e Azhornimeve te Përjashtuara</string>
+  <string name="add_to_excluded_updates_list">Ky aplikacion u hoq nga Azhornimet</string>
   <string name="excluded_updates">Azhornimet e Përjashtuara</string>
   <string name="no_excluded_updates">Nuk ka Azhornime te Përjashtuara</string>
   <string name="no_excluded_updates_selected">Nuk ka Azhornime te Përjashtuara të selektuara</string>
@@ -151,6 +153,7 @@
   <string name="adult_content">Permbajtje Erotike</string>
   <string name="stores">Dyqanet e Aplikacioneve</string>
   <string name="screenshots">Fotografo Ekranin</string>
+  <string name="about">Përshkrim</string>
   <string name="rate_this_app">Vlerëso këtë aplikacion</string>
   <string name="related_apps">Aplikacione të ngjashme</string>
   <string name="recommended_apps">Aplikacione të rekomanduara</string>
@@ -159,15 +162,16 @@
   <string name="you_need_to_login_toast">Duhet të futni të dhënat</string>
   <string name="no_recommended_apps">Nuk u gjet asnjë aplikacion i rekomanduar</string>
   <string name="no_recommended_toast">Nuk u gjet asnjë aplikacion i rekomanduar</string>
-  <string name="all_updated">Të gjithë aplikacionet janë të azhornuar!</string>
+  <string name="all_updated">Të gjithë aplikacionet janë të azhornuar</string>
   <string name="clear_all">Pastro të gjitha</string>
   <string name="menu_add_repo">Dyqan i ri Aplikacionesh</string>
   <string name="menu_rem_repo">Hiq Dyqan Aplikacionesh</string>
   <string name="menu_edit_repo">Redakto Dyqanin e Aplikacioneve</string>
   <string name="btn_chlog">Ditari i ndryshimeve</string>
+  <string name="btn_search_market">Kërko në Dyqanet e tjera</string>
   <string name="no_results_found">Nuk u gjet asnjë rezultat</string>
   <string name="found">Gjetur</string>
-  <string name="results">rezultati</string>
+  <string name="results">rezultat(et)</string>
   <string name="schDwnBtn">Planifiko Shkarkimet</string>
   <string name="search_log">Kërko</string>
   <string name="search_stores">në Dyqanet e tjera</string>
@@ -178,6 +182,7 @@
   <string name="update_done_msg1">Dyqanet u azhornuan me sukses.</string>
   <string name="about_site">Kryefaqja:</string>
   <string name="about_mail">Kontakt:</string>
+  <string name="about_us">Rreth nesh</string>
   <string name="app_trusted">%s i aplikacionit është i Besuar</string>
   <string name="app_warning">%s i aplikacionit është i Paralajmëruar</string>
   <string name="app_unknown">%s i aplikacionit është i Panjohur</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">Nuk mund të lidhet me serverin. Ju lutem verifikoni lidhjen tuaj të internetit.</string>
   <string name="no_sch_downloads">Nuk ka shkarkime të planifikuara!</string>
   <string name="size">Përmasa</string>
+  <string name="installed_version">Versioni i instaluar</string>
   <string name="schDown_install">Dëshironi të instaloni të gjithë shkarkimet e planifikuara?</string>
   <string name="schDown_installselected">Instaloni të Selektuarat</string>
   <string name="schDown_wireless_detected">Është gjetur Wireless: Dëshironi të shkarkoni gjithë aplikacionet në Shkakimet e Planifikuara?</string>
@@ -306,7 +312,7 @@
   <string name="version_info">Info rreth Versionit</string>
   <string name="payment_method">Metoda e Pagesës</string>
   <string name="payment_warning_text">Nuk mund të verifikojmë çmimin aktual të këtij produkti. Çmimi mund të këtë ndryshuar. Ju lutem konfirmoni çmimet e PayPal para pageses.</string>
-  <string name="payment_warning_title">Paralajmërim</string>
+  <string name="payment_warning_title">Paralajmërim!</string>
   <string name="buy">Bli</string>
   <string name="applications">Aplikacione</string>
   <string name="comics">Komikë</string>
@@ -360,4 +366,16 @@
   <string name="warning">Paralajmërim</string>
   <string name="unknown">i Panjohur</string>
   <string name="error_no_market">Ju nuk keni të instaluar Google Market!</string>
+  <string name="crash_notif_ticker_text">Gabim i papritur, ju lutem dërgoni një raport...</string>
+  <string name="crash_notif_text">Ju lutem klikoni këtu për të rregulluar problemin.</string>
+  <string name="crash_dialog_title">Aptoidi ka problem</string>
+  <string name="crash_dialog_text">Një gabim i papritur ka ndodhur duke detyruar aplikacionin të mos punojë. Ju lutem na ndihmoni duke dërguar raportin e ketij gabimit, ajo që duhet të bëni është të shtypni OK.</string>
+  <string name="crash_dialog_comment_prompt">Ju mund të shtoni komentin tuaj rreth problemit më poshtë:</string>
+  <string name="crash_dialog_ok_toast">Ju Faleminderit !</string>
+  <string name="finished_install">%s është instaluar.</string>
+  <string name="installing">%s po instalohet...</string>
+  <string name="new_updates">Ka %s azhornime të reja të disponueshme!</string>
+  <string name="one_new_update">Ka %s azhornim të ri të disponueshëm!</string>
+  <string name="has_updates">"%s ka  azhornim(e) të reja të disponueshme!"</string>
+  <string name="powered_by">Mundësuar nga</string>
 </resources>

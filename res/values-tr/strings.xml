@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">İndirmeye programla</string>
   <string name="exclude_update">Güncellemeyi yok say</string>
   <string name="restore_updates">Güncellemeleri geri yükle</string>
+  <string name="added_to_excluded_updates_list">%s güncellemelerden çıkarılmıştır</string>
   <string name="remove_from_excluded_updates_list">Dışlanan güncellemeler listesinden kaldır</string>
+  <string name="add_to_excluded_updates_list">Bu uygulama güncellemelerden kaldırılmıştır</string>
   <string name="excluded_updates">Dışlanan güncellemeler</string>
   <string name="no_excluded_updates">Hiçbir dışlanan güncelleme yok</string>
   <string name="no_excluded_updates_selected">Hiçbir dışlanan güncelleme seçilmedi</string>
@@ -151,6 +153,7 @@
   <string name="adult_content">Yetişkin içerik</string>
   <string name="stores">Mağaza</string>
   <string name="screenshots">Ekran görüntüleri</string>
+  <string name="about">Açıklama</string>
   <string name="rate_this_app">Bu uygulamayı değerlendir</string>
   <string name="related_apps">İlgili uygulamalar</string>
   <string name="recommended_apps">Tavsiye edilen uygulamalar</string>
@@ -165,6 +168,7 @@
   <string name="menu_rem_repo">Mağazayı kaldır</string>
   <string name="menu_edit_repo">Mağazayı düzenle</string>
   <string name="btn_chlog">Değişiklikler listesi</string>
+  <string name="btn_search_market">Diğer mağazalarda ara</string>
   <string name="no_results_found">Hiçbir sonuç bulunamadı</string>
   <string name="found">Bulundu</string>
   <string name="results">sonuç</string>
@@ -178,6 +182,7 @@
   <string name="update_done_msg1">Mağazalar başarılı olarak güncellendi.</string>
   <string name="about_site">Resmî site:</string>
   <string name="about_mail">İrtibat:</string>
+  <string name="about_us">Hakkımızda</string>
   <string name="app_trusted">%s uygulaması güvenlidir</string>
   <string name="app_warning">%s uygulaması tehlikeli</string>
   <string name="app_unknown">%s uygulaması tanınmıyor</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol ediniz.</string>
   <string name="no_sch_downloads">Programlanmış hiçbir indirme yok!</string>
   <string name="size">Boyut</string>
+  <string name="installed_version">Kurulu sürüm</string>
   <string name="schDown_install">Tüm programlanmış indirmeleri kurmak istiyor musunuz?</string>
   <string name="schDown_installselected">Seçilenleri kur</string>
   <string name="schDown_wireless_detected">Wifi bağlantısı tespit edildi: programlanmış tüm indirmeler indirilsin mi?</string>
@@ -306,7 +312,7 @@
   <string name="version_info">Sürüm verileri</string>
   <string name="payment_method">Ödeme metodu</string>
   <string name="payment_warning_text">Bu ürünün güncel fiyatını kontrol edemedik. Fiyat değişmiş olabilir. Ödemeden önce PayPal fiyatlarını doğrulayınız.</string>
-  <string name="payment_warning_title">Uyarı</string>
+  <string name="payment_warning_title">Uyarı!</string>
   <string name="buy">Satın al</string>
   <string name="applications">Uygulamalar</string>
   <string name="comics">Çizgi roman</string>
@@ -360,4 +366,16 @@
   <string name="warning">Uyarı</string>
   <string name="unknown">Bilinmeyen</string>
   <string name="error_no_market">Google Market kurulu değil!</string>
+  <string name="crash_notif_ticker_text">Beklenmeyen hata, lütfen rapor edin...</string>
+  <string name="crash_notif_text">Sorunun giderilmesine yardımcı olmak için buraya tıklayınız.</string>
+  <string name="crash_dialog_title">Aptoide çöktü</string>
+  <string name="crash_dialog_text">Uygulamayı durmaya zorlayan beklenmedik bir hata oluştu. Lütfen hata verilerini bize yollayarak sorunu çözmemize yardım edin, yapmanız gereken tek şey Tamam\'a tıklamaktır.</string>
+  <string name="crash_dialog_comment_prompt">Problem hakkında yorumlarınızı aşağıda ekleyebilirsiniz:</string>
+  <string name="crash_dialog_ok_toast">Teşekkür ederiz!</string>
+  <string name="finished_install">%s kuruldu.</string>
+  <string name="installing">%s kuruluyor...</string>
+  <string name="new_updates">%s yeni güncelleme mevcuttur!</string>
+  <string name="one_new_update">%s yeni güncelleme mevcuttur!</string>
+  <string name="has_updates">%s için yeni güncelleme(ler) mevcuttur!</string>
+  <string name="powered_by">Güçlendiren</string>
 </resources>

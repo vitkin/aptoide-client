@@ -37,6 +37,7 @@
   <string name="downloaded_apps">Descàrregues</string>
   <string name="no_downloads">No hi ha descàrregues.</string>
   <string name="not_downloaded_apps">No s\'han descarregat aplicacions</string>
+  <string name="paused">pausat</string>
   <string name="exit">sortir</string>
   <string name="install">Instal·lar</string>
   <string name="uninstall">Desinstal·lar</string>
@@ -201,7 +202,6 @@
   <string name="starting_download">Iniciant baixada</string>
   <string name="resuming_download">Continuant baixada</string>
   <string name="slow">lent</string>
-  <string name="paused">pausat</string>
   <string name="stopped">aturat</string>
   <string name="timeout">s\'ha esgotat el temps d\'espera de xarxa</string>
   <string name="ip_blacklisted">IP a la llista negra</string>

@@ -52,7 +52,9 @@
   <string name="chkBoxSchDwn">Plánované stahování</string>
   <string name="exclude_update">Ignorovat aktualizaci</string>
   <string name="restore_updates">Obnovení aktualizace</string>
+  <string name="added_to_excluded_updates_list">%s bylo vyloučeno z aktualizace</string>
   <string name="remove_from_excluded_updates_list">Odebrat ze seznamu vyloučených aktualizací</string>
+  <string name="add_to_excluded_updates_list">Tato aplikace byla odebrána z aktualizací</string>
   <string name="excluded_updates">Vyloučené aktualizace</string>
   <string name="no_excluded_updates">Žádné vyloučené aktualizace</string>
   <string name="no_excluded_updates_selected">Nezvolena žádná vyloučená aktualizace</string>
@@ -151,6 +153,7 @@
   <string name="adult_content">Obsah pouze pro dospělé</string>
   <string name="stores">Obchody</string>
   <string name="screenshots">Snímky obrazovky</string>
+  <string name="about">Popis</string>
   <string name="rate_this_app">Hodnotit tuto aplikaci</string>
   <string name="related_apps">Související aplikace</string>
   <string name="recommended_apps">Doporučené aplikace</string>
@@ -165,6 +168,7 @@
   <string name="menu_rem_repo">Odebrat obchod</string>
   <string name="menu_edit_repo">Upravit obchod</string>
   <string name="btn_chlog">Seznam změn</string>
+  <string name="btn_search_market">Vyhledat další trhy</string>
   <string name="no_results_found">Nic nenalezeno</string>
   <string name="found">Nalezeno</string>
   <string name="results">výsledek(y)</string>
@@ -178,6 +182,7 @@
   <string name="update_done_msg1">Obchody úspěšně aktualizovány.</string>
   <string name="about_site">Úvod:</string>
   <string name="about_mail">Kontakt:</string>
+  <string name="about_us">O nás</string>
   <string name="app_trusted">%s aplikace je důvěryhodná</string>
   <string name="app_warning">"%s  varování na aplikaci"</string>
   <string name="app_unknown">%s aplikace je neznámá</string>
@@ -213,6 +218,7 @@
   <string name="aptoide_error">Nelze se připojit ke vzdálenému serveru. Zkontrolujte prosím připojení k Internetu.</string>
   <string name="no_sch_downloads">Žádná naplánovaná stahování!</string>
   <string name="size">Velikost</string>
+  <string name="installed_version">Instalovaná verze</string>
   <string name="schDown_install">Chcete nainstalovat všechna plánovaná stahování?</string>
   <string name="schDown_installselected">Instalovat vybrané</string>
   <string name="schDown_wireless_detected">Zjištěno bezdrátové připojení: Stáhnout všechny aplikace obsažené v plánovaném stahování?</string>
@@ -306,7 +312,7 @@
   <string name="version_info">Informace o verzi</string>
   <string name="payment_method">Platební metoda</string>
   <string name="payment_warning_text">Nemohli jsme zjistit aktuální cenu výrobku.Cena se může změnit. Ověřte prosím PayPal cenu před provedením platby.</string>
-  <string name="payment_warning_title">Varování</string>
+  <string name="payment_warning_title">Varování!</string>
   <string name="buy">Koupit</string>
   <string name="applications">Aplikace</string>
   <string name="comics">Komiks</string>
@@ -360,4 +366,16 @@
   <string name="warning">Varování</string>
   <string name="unknown">Neznámé</string>
   <string name="error_no_market">Nemáte nainstalován Google Market!</string>
+  <string name="crash_notif_ticker_text">Neočekávaná chyba, pošlete prosím zprávu ...</string>
+  <string name="crash_notif_text">Pro pomoc při řešení problému klikněte prosím zde.</string>
+  <string name="crash_dialog_title">Aptoide havaroval</string>
+  <string name="crash_dialog_text">Došlo k neočekávané chybě, která aplikaci vynucině zastavila. Prosím, pomozte nám to opravit tím, že nám zašlete údaje o chybě. Vše, co musíte udělat, je kliknout na tlačítko OK.</string>
+  <string name="crash_dialog_comment_prompt">Můžete přidat svůj komentář k problému níže:</string>
+  <string name="crash_dialog_ok_toast">Děkujeme!</string>
+  <string name="finished_install">%s bylo nainstalováno.</string>
+  <string name="installing">Instaluji %s ...</string>
+  <string name="new_updates">Je dostupných %s nových aktualizací!</string>
+  <string name="one_new_update">Je dostupná nová aktualizace %s !</string>
+  <string name="has_updates">%s nových aktualizací!!</string>
+  <string name="powered_by">Běží na</string>
 </resources>

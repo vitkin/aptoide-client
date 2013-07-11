@@ -243,9 +243,14 @@ public class MainService extends Service {
 	public void addStore(Database db, String uri_str, String username, String password) {
 		Server server = null;
 		try{
-			if(db.getServer(uri_str)!=null){
+
+            if(db.getServer(uri_str)!=null){
 				return;
 			}
+
+
+
+
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
 
