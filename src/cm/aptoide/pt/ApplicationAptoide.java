@@ -411,11 +411,14 @@ public class ApplicationAptoide extends Application {
             e.printStackTrace();
         }
 
-
-
-        managerPreferences = new ManagerPreferences(getApplicationContext());
-
-
+        try{
+        	managerPreferences = new ManagerPreferences(getApplicationContext());
+        	if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+        		managerPreferences.createLauncherShortcut(this);
+        	}
+        } catch (PackageManager.NameNotFoundException e) {
+        	e.printStackTrace();
+        }
 
 //        if(reDoLauncherShorcut){
 //        	managerPreferences.createLauncherShortcut(context);
