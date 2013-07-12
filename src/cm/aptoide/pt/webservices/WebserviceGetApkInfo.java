@@ -1,5 +1,6 @@
 package cm.aptoide.pt.webservices;
 
+import android.content.Context;
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Category;
@@ -38,6 +39,9 @@ public class WebserviceGetApkInfo {
     private boolean seeAll = false;
     private boolean screenshotChanged;
 
+    public static String getMyCountrCode(Context context){
+        return context.getResources().getConfiguration().locale.getLanguage()+"_"+context.getResources().getConfiguration().locale.getCountry();
+    }
 
     public WebserviceGetApkInfo(String webservice,ViewApk apk, Category category, String token, String md5 ) throws IOException, JSONException {
 
@@ -55,6 +59,9 @@ public class WebserviceGetApkInfo {
         options.add(new WebserviceOptions("cmtlimit", "6"));
         options.add(new WebserviceOptions("md5sum", md5));
         options.add(new WebserviceOptions("payinfo", "true"));
+        options.add(new WebserviceOptions("lang", getMyCountrCode(ApplicationAptoide.getContext())));
+
+
 
         StringBuilder sb = new StringBuilder();
         sb.append("(");

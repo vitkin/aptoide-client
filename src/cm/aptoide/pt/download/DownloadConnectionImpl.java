@@ -32,6 +32,7 @@ public class DownloadConnectionImpl extends DownloadConnection {
     public long connect(long downloaded) throws IOException, CompletedDownloadException, NotFoundException, IPBlackListedException {
         connection = (HttpURLConnection) this.mURL.openConnection();
 
+
         connection.setConnectTimeout(TIME_OUT);
         connection.setReadTimeout(TIME_OUT);
         connection.setRequestProperty("User-Agent", NetworkUtils.getUserAgentString(ApplicationAptoide.getContext()));

@@ -321,6 +321,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     finish();
                 }
                 mAdView = (MoPubView)findViewById(R.id.adview);
+                mAdView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 mAdView.setAdUnitId(ApplicationAptoide.ADUNITID); // Enter your Ad Unit ID from www.mopub.com
                 mAdView.loadAd();
                 pd.dismiss();
@@ -1131,19 +1132,22 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
 
     @Subscribe
-    public void handleUpdate(DownloadInfo download) {
+    public void handleUpdate(final DownloadInfo download) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //To change body of implemented methods use File | Settings | File Templates.
 
-        if(download.equals(this.download)){
+        if(download.equals(ApkInfo.this.download)){
 
         Log.d("TAG", "UPDATE");
 
 //            Log.d("Aptoide-ApkInfo", "download status update: "+EnumDownloadStatus.reverseOrdinal(msg.what).name());
-        ProgressBar progress;
+        ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
         Log.d("handleUpdate-Enum", download.getStatusState().getEnumState().name()+"");
         switch (download.getStatusState().getEnumState()) {
 
             case INACTIVE:
-               progress = (ProgressBar) findViewById(R.id.downloading_progress);
                progress.setIndeterminate(false);
                progress.setProgress(download.getPercentDownloaded());
 
@@ -1163,13 +1167,13 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 //                    ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 //                    break;
             case ACTIVE:
-                progress = (ProgressBar) findViewById(R.id.downloading_progress);
+
 
                 if(download.getPercentDownloaded()==0){
              	   progress.setIndeterminate(true);
              	   ((TextView) findViewById(R.id.speed)).setText(R.string.starting);
                 }else{
-                	 progress.setIndeterminate(false);
+                	progress.setIndeterminate(false);
                     ((TextView) findViewById(R.id.speed)).setText(Utils.formatBits((long) download.getSpeed()) + "ps - " + Utils.formatEta(download.getEta(), getString(R.string.time_left)));
                 }
 
@@ -1220,6 +1224,8 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 break;
         }
         }
+            }
+        });
 
 
     }

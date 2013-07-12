@@ -10,6 +10,7 @@ package cm.aptoide.pt;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+
+import java.util.Locale;
 
 
 public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
@@ -73,10 +76,11 @@ public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentAct
 		searchButton.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
 
 
+
 		searchButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				String url = "http://m.aptoide.com/searchview.php?search="+query;
+				String url = "http://m.aptoide.com/searchview.php?search="+query+filters();
 
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
@@ -123,8 +127,28 @@ public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentAct
 		});
 	}
 
+    private String filters() {
 
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+        int minSdk = HWSpecifications.getSdkVer();
+        String minScreen = cm.aptoide.pt.Filters.Screens.values()
+                [HWSpecifications.getScreenSize(this)]
+                .name()
+                .toLowerCase(Locale.ENGLISH);
+        String minGlEs = HWSpecifications.getEsglVer(this);
+
+        String cpuAbi;
+
+        if(Build.VERSION.SDK_INT>7){
+            cpuAbi = Build.CPU_ABI2;
+        }else{
+            cpuAbi = Build.CPU_ABI;
+        }
+
+        return "&maxSdk="+minSdk+"&maxScreen="+minScreen+"&maxGles="+minGlEs+"&cpuAbi="+cpuAbi;
+    }
+
+
+    public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		SimpleCursorLoader a = new SimpleCursorLoader(this) {
 
 			@Override
