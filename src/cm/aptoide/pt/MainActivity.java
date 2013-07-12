@@ -1845,6 +1845,39 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                     ApplicationAptoide.setRestartLauncher(true);
                     PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode).commit();
                 }
+
+                if(ApplicationAptoide.isRestartLauncher() && !ApplicationAptoide.BRAND.equals("brand_aptoide")){
+                    AlertDialog ad = new AlertDialog.Builder(this).create();
+                    ad.setCancelable(false);
+                    ad.setMessage("We need to restart your launcher. Continue?");
+                    ad.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+
+
+                            ApplicationAptoide.restartLauncher(MainActivity.this);
+                            ApplicationAptoide.setRestartLauncher(false);
+
+//                            ManagerPreferences.removePreviousShortcuts(MainActivity.this, false);
+//                            ManagerPreferences.removePreviousShortcuts(MainActivity.this, true);
+//
+//                            Handler handler = new Handler();
+//
+//                            handler.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//
+//                                    new ManagerPreferences(MainActivity.this).createLauncherShortcut(MainActivity.this);
+//
+//                                }
+//                            },5000);
+
+
+                        }
+                    });
+                    ad.show();
+                }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
@@ -2368,12 +2401,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			}
 		}
         Log.d("TAAAG", ApplicationAptoide.isRestartLauncher()+" restartLauncher");
-
-//        if(ApplicationAptoide.isRestartLauncher()){
-//            ApplicationAptoide.restartLauncher(MainActivity.this);
-//            ApplicationAptoide.setRestartLauncher(false);
-//        }
-
 
 		return super.onKeyDown(keyCode, event);
 	}

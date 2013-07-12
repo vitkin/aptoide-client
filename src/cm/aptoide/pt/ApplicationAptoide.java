@@ -413,7 +413,7 @@ public class ApplicationAptoide extends Application {
 
         try{
         	managerPreferences = new ManagerPreferences(getApplicationContext());
-        	if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+        	if (ApplicationAptoide.BRAND.equals("brand_aptoide") && PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
         		managerPreferences.createLauncherShortcut(this);
         	}
         } catch (PackageManager.NameNotFoundException e) {
@@ -473,6 +473,9 @@ public class ApplicationAptoide extends Application {
 	public static void restartLauncher(Context context) {
         try{
 
+
+
+
             replaceOemIcon();
             PackageManager pm = context.getPackageManager();
             ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
@@ -496,6 +499,8 @@ public class ApplicationAptoide extends Application {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
         new ManagerPreferences(getContext()).createLauncherShortcut(getContext());
         Log.d("ApplicationAptoide", "End restartLauncher");
 

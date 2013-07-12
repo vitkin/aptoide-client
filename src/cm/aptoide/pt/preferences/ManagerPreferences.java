@@ -77,16 +77,14 @@ public class ManagerPreferences{
 
             Log.d("ManagerPreferences", "Creating Icon " + Constants.APTOIDE_CLASS_NAME);
 
-            Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-
-            shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
+            Intent shortcutIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
     //		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
             final Intent intent = new Intent();
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
             intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);
-            
+
             Parcelable iconResource;
             try{
             	iconResource = Intent.ShortcutIconResource.fromContext(context, context.getResources().getIdentifier("icon_" + ApplicationAptoide.BRAND,"drawable",context.getPackageName()));
