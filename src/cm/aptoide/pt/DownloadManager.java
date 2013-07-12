@@ -113,8 +113,8 @@ public class DownloadManager extends SherlockFragmentActivity {
 
             sort(onGoingArrayList);
 
-            onGoingList.setAdapter(onGoingadapter);
-            notOngoingList.setAdapter(notOngoingAdapter);
+            onGoingListView.setAdapter(onGoingadapter);
+            notOngoingListView.setAdapter(notOngoingAdapter);
 
         }
 
@@ -243,9 +243,10 @@ public class DownloadManager extends SherlockFragmentActivity {
 
 		}
 	};
-    private ListView onGoingList;
-    private ListView notOngoingList;
-
+    private ListView onGoingListView;
+    private TextView onGoingTextView;
+    private ListView notOngoingListView;
+    private TextView notOngoingTextView;
 
     private void prePopulateLists(){
 		try {
@@ -293,7 +294,7 @@ public class DownloadManager extends SherlockFragmentActivity {
     public void onDownloadTick(DownloadInfo download){
 
         try{
-            ListView list = onGoingList;
+            ListView list = onGoingListView;
             int start = list.getFirstVisiblePosition();
             for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
                 if (download == list.getItemAtPosition(i)) {
@@ -302,7 +303,7 @@ public class DownloadManager extends SherlockFragmentActivity {
                     break;
                 }
         }catch (Exception e){
-            ListView list = notOngoingList;
+            ListView list = notOngoingListView;
             int start = list.getFirstVisiblePosition();
             for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
                 if (download == list.getItemAtPosition(i)) {
@@ -336,6 +337,31 @@ public class DownloadManager extends SherlockFragmentActivity {
 
 
     }
+    
+    private void refreshListViews() {
+		if(notOnGoingArrayList.isEmpty()){
+			notOngoingTextView.setVisibility(View.GONE);
+			notOngoingListView.setVisibility(View.GONE);
+	    }else{
+	    	notOngoingTextView.setVisibility(View.VISIBLE);
+	    	notOngoingListView.setVisibility(View.VISIBLE);
+	    }
+		
+		if(onGoingArrayList.isEmpty()){
+			onGoingTextView.setVisibility(View.GONE);
+			onGoingListView.setVisibility(View.GONE);
+		}else{
+			onGoingTextView.setVisibility(View.VISIBLE);
+			onGoingListView.setVisibility(View.VISIBLE);
+		}
+		
+		if(onGoingArrayList.isEmpty() && notOnGoingArrayList.isEmpty()){
+			noDownloads.setVisibility(View.VISIBLE);
+		}else{
+			noDownloads.setVisibility(View.GONE);
+		}
+		
+	}
 
     private void sort(ArrayList<DownloadInfo> list) {
 
@@ -386,9 +412,15 @@ public class DownloadManager extends SherlockFragmentActivity {
 //        onGoingList = new ListView(this);
 //        notOngoingList = new ListView(this);
 
-        onGoingList = (ListView) findViewById(R.id.downloading_list);
-        notOngoingList = (ListView) findViewById(R.id.downloaded_list);
+        onGoingListView = (ListView) findViewById(R.id.downloading_list);
+        notOngoingListView = (ListView) findViewById(R.id.downloaded_list);
         
+        onGoingTextView = (TextView) findViewById(R.id.downloading_intro);
+        notOngoingTextView = (TextView) findViewById(R.id.downloaded_intro);
+        
+//        noDownloads = (TextView) findViewById(R.id.no_downloads);
+        
+       
 //        views.add(onGoingList);
 //        views.add(notOngoingList);
 //        ViewPagerAdapter adapter = new ViewPagerAdapter(this, views);
@@ -397,12 +429,13 @@ public class DownloadManager extends SherlockFragmentActivity {
 //        TitlePageIndicator pageIndicator = (TitlePageIndicator) findViewById(R.id.downloadManagerPageIndicator);
 //        pageIndicator.setViewPager(vp);
 
-        onGoingList.setAdapter(onGoingadapter);
-        notOngoingList.setAdapter(notOngoingAdapter);
+        onGoingListView.setAdapter(onGoingadapter);
+        notOngoingListView.setAdapter(notOngoingAdapter);
+        
+        
+        registerForContextMenu(onGoingListView);
 
-        registerForContextMenu(onGoingList);
-
-        notOngoingList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        notOngoingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ((DownloadInfo)parent.getItemAtPosition(position)).download();
