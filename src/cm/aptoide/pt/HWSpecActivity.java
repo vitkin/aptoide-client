@@ -31,10 +31,7 @@ public class HWSpecActivity extends SherlockActivity /*SherlockActivity */{
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.hwspecs);
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle(getString(R.string.setting_hwspecstitle));
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 
 		sdkVer= (TextView) findViewById(R.id.sdkver);
 		screenSize = (TextView) findViewById(R.id.screenSize);

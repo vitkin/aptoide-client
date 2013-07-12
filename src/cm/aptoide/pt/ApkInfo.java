@@ -167,10 +167,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         intentFilter.addDataScheme("package");
         registerReceiver(installedBroadcastReceiver, intentFilter);
 
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle("");
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 
         if(!isRunning){
             isRunning = true;
@@ -321,7 +318,9 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     finish();
                 }
                 mAdView = (MoPubView)findViewById(R.id.adview);
-                mAdView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                if(Build.VERSION.SDK_INT > 11){
+                	mAdView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                }
                 mAdView.setAdUnitId(ApplicationAptoide.ADUNITID); // Enter your Ad Unit ID from www.mopub.com
                 mAdView.loadAd();
                 pd.dismiss();
@@ -612,7 +611,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+    	if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
         switch (item.getItemId()) {
             case 0:
                 Uri uri = Uri.fromParts("package", viewApk.getApkid(), null);

@@ -11,17 +11,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/downloadManagerTextView"
-        style="?attr/customHeaderTextViewBackground"
-        android:text="@string/download_manager" />
-
     <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/downloadManagerPageIndicator"
         style="?attr/viewPagerIndicatorBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/downloadManagerTextView"
         app:footerColor="?attr/custom_color"
         app:footerLineHeight="1dp"
         app:selectedColor="?attr/custom_color" />

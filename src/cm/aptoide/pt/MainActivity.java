@@ -1539,7 +1539,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
         mContext = this;
 
-
+        getSupportActionBar().hide();
 
 
 		File sdcard_file = new File(SDCARD);

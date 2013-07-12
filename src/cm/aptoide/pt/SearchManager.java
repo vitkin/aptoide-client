@@ -31,7 +31,7 @@ import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import java.util.Locale;
 
 
-public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
+public class SearchManager extends SherlockFragmentActivity implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
 //	EditText searchBox;
@@ -48,10 +48,7 @@ public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentAct
 		System.out.println("onCreate Search");
 		db = Database.getInstance();
 		setContentView(R.layout.searchmanager);
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle(getString(R.string.search_on_aptoide));
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");
 		}else{

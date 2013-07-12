@@ -7,20 +7,21 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
-import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
-import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
+import java.util.ArrayList;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 
-import java.util.ArrayList;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
+import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
+import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 
-public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivity */{
+public class ScreenshotsViewer extends SherlockFragmentActivity {
 
 	String url;
 	int position;
@@ -34,10 +35,7 @@ public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivit
 		super.onCreate(arg0);
 
 		setContentView(R.layout.screenshots_viewer);
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle(getString(R.string.screenshots));
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 		context = this;
 		final ViewPager screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);

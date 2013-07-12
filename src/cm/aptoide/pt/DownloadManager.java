@@ -21,6 +21,7 @@ package cm.aptoide.pt;
 
 import android.content.*;
 import android.content.DialogInterface.OnDismissListener;
+import android.graphics.drawable.Drawable;
 import android.os.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -29,6 +30,7 @@ import android.view.ContextMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
@@ -52,6 +54,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Locale;
 
 /**
  * DownloadManager
@@ -59,7 +62,7 @@ import java.util.Comparator;
  * @author dsilveira
  *
  */
-public class DownloadManager extends FragmentActivity /*SherlockActivity */{
+public class DownloadManager extends SherlockFragmentActivity {
 	private boolean isRunning = false;
 
 	private LinearLayout downloading;
@@ -352,7 +355,29 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 
-
+		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
+			getSupportActionBar().setIcon(R.drawable.brand_jblow);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("magalhaes")){
+			getSupportActionBar().setIcon(R.drawable.brand_magalhaes);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("timwe")){
+			getSupportActionBar().setIcon(R.drawable.brand_timwe);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("digitallydifferent")){
+			getSupportActionBar().setIcon(R.drawable.brand_digitallydifferent);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
+			getSupportActionBar().setIcon(R.drawable.brand_eocean);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("educomp")){
+			getSupportActionBar().setIcon(R.drawable.brand_educomp);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("peoplenet")){
+			getSupportActionBar().setIcon(R.drawable.brand_peoplenet);
+		}else if(ApplicationAptoide.BRAND!=null){
+			getSupportActionBar().setIcon(getBrandDrawableResource());
+		}else{
+			getSupportActionBar().setIcon(R.drawable.brand_aptoide_padding);
+		}
+		
+		getSupportActionBar().setTitle(getString(R.string.download_manager));
+		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         BusProvider.getInstance().register(this);
         setContentView(R.layout.download_manager);
@@ -389,10 +414,6 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 //	    	}
 //
 //			setContentView(R.layout.download_manager);
-////			getSupportActionBar().setIcon(R.drawable.brand_padding);
-////			getSupportActionBar().setTitle(getString(R.string.download_manager));
-////			getSupportActionBar().setHomeButtonEnabled(true);
-////			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
 //			downloading.setVisibility(View.GONE);
 //
@@ -416,7 +437,47 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
 	}
 
-    @Override
+    private int getBrandDrawableResource() {
+    	int brandDrawableResource = this.getResources().getIdentifier("brand_aptoide_padding", "drawable", this.getPackageName());
+		EnumAptoideThemes enumAptoideTheme = null;
+		String aptoideThemeString = "APTOIDE_THEME_"+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
+		try {
+			enumAptoideTheme = EnumAptoideThemes.valueOf(aptoideThemeString);
+		} catch (Exception e) {
+			enumAptoideTheme = EnumAptoideThemes.APTOIDE_THEME_DEFAULT;
+		}
+		switch(enumAptoideTheme){
+		case APTOIDE_THEME_DIGITALLYDIFFERENT:
+			brandDrawableResource = this.getResources().getIdentifier("brand_digitallydifferent", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_EOCEAN:
+			brandDrawableResource = this.getResources().getIdentifier("brand_eocean", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_JBLOW:
+			brandDrawableResource = this.getResources().getIdentifier("brand_jblow", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_LAZERPLAY:
+			brandDrawableResource = this.getResources().getIdentifier("brand_lazerplay", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_MAGALHAES:
+			brandDrawableResource = this.getResources().getIdentifier("brand_magalhaes", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_TIMWE:
+			brandDrawableResource = this.getResources().getIdentifier("brand_timwe", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+
+		}
+		return brandDrawableResource;
+	}
+
+
+	@Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
@@ -741,10 +802,10 @@ public class DownloadManager extends FragmentActivity /*SherlockActivity */{
 
 //	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-//		if (item.getItemId() == android.R.id.home) {
-//			finish();
-//			return true;
-//		}
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
 		switch (item.getItemId()) {
 		case 0:
 			Log.d("Aptoide-DownloadManager", "clear all");

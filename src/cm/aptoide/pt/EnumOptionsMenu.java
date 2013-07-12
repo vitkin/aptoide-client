@@ -22,13 +22,14 @@ package cm.aptoide.pt;
 
 public enum EnumOptionsMenu {
 	
+	SEARCH,
 	DISPLAY_OPTIONS,
 	SETTINGS, 
 	FOLLOW,
 	LOGIN,
 	DOWNLOADMANAGER,
 	SCHEDULED_DOWNLOADS,
-	ABOUT, SEARCH;
+	ABOUT;
 	
 	
 	public static EnumOptionsMenu reverseOrdinal(int ordinal){

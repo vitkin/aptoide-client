@@ -77,10 +77,7 @@ public class Login extends SherlockActivity /*SherlockActivity */{
 		super.onCreate(savedInstanceState);
 
 		context = this;
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle(getString(R.string.my_account));
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 		pd = new ProgressDialog(context);
 		if (isLoggedIn(context)) {
 			setContentView(R.layout.form_logout);

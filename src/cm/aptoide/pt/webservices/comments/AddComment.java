@@ -37,10 +37,7 @@ public class AddComment extends SherlockActivity /*SherlockActivity */{
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.form_add_comment);
-//		getSupportActionBar().setIcon(R.drawable.brand_padding);
-//		getSupportActionBar().setTitle("Add comment");
-//		getSupportActionBar().setHomeButtonEnabled(true);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().hide();
 		context = this;
 		this.repo = getIntent().getStringExtra("repo");
 		this.apkid = getIntent().getStringExtra("apkid");

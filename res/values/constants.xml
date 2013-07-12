@@ -9,6 +9,8 @@
     <string name="app_name_jblow">J-Blow Market</string>
     <string name="app_name_educomp">Educomp Market</string>
     <string name="app_name_peoplenet">Peoplenet Market</string>
+    <string name="app_name_ford">SYNC AppLink Market</string>
+    <string name="app_name_morva">Morva</string>
     
     <string name="email_encoding">message/rfc822</string>
     <string name="ip_blacklisted_email_contact">ipblacklist@aptoide.com</string>

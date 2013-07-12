@@ -52,7 +52,7 @@ public class ManagerPreferences{
             setPreferences = getPreferences.edit();
             Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
             if(getAptoideClientUUID() == null){
-    			createLauncherShortcut(context);
+//    			createLauncherShortcut(context);
 
                 setAptoideClientUUID( UUID.randomUUID().toString() );
                 try {
@@ -86,10 +86,14 @@ public class ManagerPreferences{
             intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
             intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);
-
-
-            Parcelable iconResource = Intent.ShortcutIconResource.fromContext(context, context.getResources().getIdentifier("icon_" + ApplicationAptoide.BRAND,"drawable",context.getPackageName()));
-
+            
+            Parcelable iconResource;
+            try{
+            	iconResource = Intent.ShortcutIconResource.fromContext(context, context.getResources().getIdentifier("icon_" + ApplicationAptoide.BRAND,"drawable",context.getPackageName()));
+            }catch(Exception e){
+            	e.printStackTrace();
+            	iconResource = Intent.ShortcutIconResource.fromContext(context, context.getResources().getIdentifier("icon_brand_aptoide","drawable",context.getPackageName()));
+            }
             intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
             intent.putExtra("duplicate", false);
             intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
