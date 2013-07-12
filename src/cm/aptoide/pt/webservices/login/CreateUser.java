@@ -53,7 +53,7 @@ public class CreateUser extends SherlockActivity /*SherlockActivity */{
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.form_create_user);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 		context = this;
 		username_box = (EditText) findViewById(R.id.email_box);
 		password_box = (EditText) findViewById(R.id.password_box);

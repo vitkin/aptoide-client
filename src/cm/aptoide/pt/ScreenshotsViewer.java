@@ -35,7 +35,7 @@ public class ScreenshotsViewer extends SherlockFragmentActivity {
 		super.onCreate(arg0);
 
 		setContentView(R.layout.screenshots_viewer);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 		context = this;
 		final ViewPager screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);

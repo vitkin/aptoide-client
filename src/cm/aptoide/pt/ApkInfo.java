@@ -167,7 +167,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         intentFilter.addDataScheme("package");
         registerReceiver(installedBroadcastReceiver, intentFilter);
 
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 
         if(!isRunning){
             isRunning = true;

@@ -2,14 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Aptoide default theme -->
-    <style name="Aptoide.Theme.Default" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Default" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Default.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Default.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionMenuTextColor" tools:ignore="NewApi">@android:color/white</item>
+        <!-- <item name="actionBarStyle">@style/Aptoide.Widget.Styled.ActionBar</item> -->
+        <!-- <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Widget.Styled.ActionBar</item> -->
+        <!-- <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
+        <!-- <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
+        <!-- <item name="android:actionMenuTextColor" tools:ignore="NewApi">@android:color/white</item> -->
         <item name="android:buttonStyle">@style/custom_button_style_aptoide</item>
         <item name="custom_color">@color/custom_color</item>
         <item name="dark_custom_color">@color/dark_custom_color</item>
@@ -33,21 +33,22 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Default.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-        <item name="background">@drawable/actionbar_bgd_aptoide</item>
-        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
-    </style>
+    <!-- <style name="Aptoide.Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar"> -->
+    <!-- <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item> -->
+    <!-- <item name="titleTextStyle">@android:color/white</item> -->
+    <!-- <item name="background">@drawable/actionbar_bgd_aptoide</item> -->
+    <!-- <item name="android:background">@drawable/actionbar_bgd_aptoide</item> -->
+    <!-- </style> -->
+
 
     <!-- Midnight theme -->
-    <style name="Aptoide.Theme.Midnight" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Midnight" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Midnight.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Midnight.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
+        <!-- <item name="actionBarStyle">@style/Widget.Styled.ActionBar.Midnight</item> -->
+        <!-- <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Widget.Styled.ActionBar.Midnight</item> -->
+        <!-- <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
+        <!-- <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
         <item name="android:buttonStyle">@style/custom_button_style_midnight</item>
         <item name="custom_color">@color/custom_color_midnight</item>
         <item name="dark_custom_color">@color/dark_custom_color_midnight</item>
@@ -71,20 +72,16 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Midnight.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_midnight</item>
-        <item name="android:background">@drawable/actionbar_bgd_midnight</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
+    <!-- <style name="Widget.Styled.ActionBar.Midnight" parent="Widget.Sherlock.ActionBar"> -->
+    <!-- <item name="background">@drawable/actionbar_bgd_midnight</item> -->
+    <!-- <item name="android:background">@drawable/actionbar_bgd_midnight</item> -->
+    <!-- <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item> -->
+    <!-- <item name="titleTextStyle">@android:color/white</item> -->
+    <!-- </style> -->
 
-    <style name="Aptoide.Theme.Magalhaes" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Magalhaes" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_magalhaes</item>
         <item name="custom_color">@color/custom_color_magalhaes</item>
         <item name="dark_custom_color">@color/dark_custom_color_magalhaes</item>
@@ -108,20 +105,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Magalhaes.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_magalhaes</item>
-        <item name="android:background">@drawable/actionbar_bgd_magalhaes</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Maroon" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Maroon" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Maroon.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Maroon.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_maroon</item>
         <item name="custom_color">@color/custom_color_maroon</item>
         <item name="dark_custom_color">@color/dark_custom_color_maroon</item>
@@ -145,20 +131,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Maroon.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_maroon</item>
-        <item name="android:background">@drawable/actionbar_bgd_maroon</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Gold" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Gold" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Gold.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Gold.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_gold</item>
         <item name="custom_color">@color/custom_color_gold</item>
         <item name="dark_custom_color">@color/dark_custom_color_gold</item>
@@ -182,20 +157,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Gold.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_gold</item>
-        <item name="android:background">@drawable/actionbar_bgd_gold</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Orange" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Orange" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Orange.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Orange.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_orange</item>
         <item name="custom_color">@color/custom_color_orange</item>
         <item name="dark_custom_color">@color/dark_custom_color_orange</item>
@@ -219,20 +183,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Orange.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_orange</item>
-        <item name="android:background">@drawable/actionbar_bgd_orange</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.SpringGreen" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.SpringGreen" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.SpringGreen.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.SpringGreen.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_springgreen</item>
         <item name="custom_color">@color/custom_color_springgreen</item>
         <item name="dark_custom_color">@color/dark_custom_color_springgreen</item>
@@ -256,20 +209,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.SpringGreen.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_springgreen</item>
-        <item name="android:background">@drawable/actionbar_bgd_springgreen</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.LightSky" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.LightSky" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.LightSky.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.LightSky.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_lightsky</item>
         <item name="custom_color">@color/custom_color_lightsky</item>
         <item name="dark_custom_color">@color/dark_custom_color_lightsky</item>
@@ -293,20 +235,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.LightSky.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_lightsky</item>
-        <item name="android:background">@drawable/actionbar_bgd_lightsky</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Pink" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Pink" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Pink.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Pink.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_pink</item>
         <item name="custom_color">@color/custom_color_pink</item>
         <item name="dark_custom_color">@color/dark_custom_color_pink</item>
@@ -330,20 +261,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Pink.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_pink</item>
-        <item name="android:background">@drawable/actionbar_bgd_pink</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Blue" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Blue" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Blue.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Blue.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_blue</item>
         <item name="custom_color">@color/custom_color_blue</item>
         <item name="dark_custom_color">@color/dark_custom_color_blue</item>
@@ -367,20 +287,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Blue.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_blue</item>
-        <item name="android:background">@drawable/actionbar_bgd_blue</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Red" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Red" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Red.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Red.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_red</item>
         <item name="custom_color">@color/custom_color_red</item>
         <item name="dark_custom_color">@color/dark_custom_color_red</item>
@@ -404,20 +313,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Red.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_red</item>
-        <item name="android:background">@drawable/actionbar_bgd_red</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Magenta" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Magenta" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Magenta.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Magenta.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_magenta</item>
         <item name="custom_color">@color/custom_color_magenta</item>
         <item name="dark_custom_color">@color/dark_custom_color_magenta</item>
@@ -441,20 +339,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Magenta.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_magenta</item>
-        <item name="android:background">@drawable/actionbar_bgd_magenta</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.SlateGray" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.SlateGray" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.SlateGray.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.SlateGray.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_slategray</item>
         <item name="custom_color">@color/custom_color_slategray</item>
         <item name="dark_custom_color">@color/dark_custom_color_slategray</item>
@@ -478,20 +365,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.SlateGray.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_slategray</item>
-        <item name="android:background">@drawable/actionbar_bgd_slategray</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.SeaGreen" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.SeaGreen" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.SeaGreen.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.SeaGreen.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_seagreen</item>
         <item name="custom_color">@color/custom_color_seagreen</item>
         <item name="dark_custom_color">@color/dark_custom_color_seagreen</item>
@@ -515,20 +391,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.SeaGreen.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_seagreen</item>
-        <item name="android:background">@drawable/actionbar_bgd_seagreen</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.Silver" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.Silver" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Silver.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Silver.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_silver</item>
         <item name="custom_color">@color/custom_color_silver</item>
         <item name="dark_custom_color">@color/dark_custom_color_silver</item>
@@ -552,20 +417,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.Silver.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_silver</item>
-        <item name="android:background">@drawable/actionbar_bgd_silver</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.DimGray" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.DimGray" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.DimGray.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.DimGray.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_dimgray</item>
         <item name="custom_color">@color/custom_color_dimgray</item>
         <item name="dark_custom_color">@color/dark_custom_color_dimgray</item>
@@ -589,20 +443,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.DimGray.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_dimgray</item>
-        <item name="android:background">@drawable/actionbar_bgd_dimgray</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.TimWe" parent="@style/Theme.Sherlock">
+    <style name="Aptoide.Theme.TimWe" parent="@style/Theme.Sherlock.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color_timwe</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.TimWe.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.TimWe.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_timwe</item>
         <item name="custom_color">@color/custom_color_timwe</item>
         <item name="dark_custom_color">@color/dark_custom_color_timwe</item>
@@ -626,20 +469,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_dark</item>
     </style>
 
-    <style name="Aptoide.Theme.TimWe.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_timwe</item>
-        <item name="android:background">@drawable/actionbar_bgd_timwe</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.EOcean" parent="@style/Theme.Sherlock">
+    <style name="Aptoide.Theme.EOcean" parent="@style/Theme.Sherlock.NoActionBar">
         <item name="android:windowBackground">@drawable/background_eocean</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.EOcean.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.EOcean.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_eocean</item>
         <item name="custom_color">@color/custom_color_eocean</item>
         <item name="dark_custom_color">@color/dark_custom_color_eocean</item>
@@ -663,20 +495,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_dark</item>
     </style>
 
-    <style name="Aptoide.Theme.EOcean.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_eocean</item>
-        <item name="android:background">@drawable/actionbar_bgd_eocean</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.DigitallyDifferent" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.DigitallyDifferent" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.DigitallyDifferent.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.DigitallyDifferent.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_digitallydifferent</item>
         <item name="custom_color">@color/custom_color_digitallydifferent</item>
         <item name="dark_custom_color">@color/dark_custom_color_digitallydifferent</item>
@@ -700,20 +521,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.DigitallyDifferent.ActionBar" parent="Widget.Sherlock.ActionBar">
-        <item name="background">@drawable/actionbar_bgd_digitallydifferent</item>
-        <item name="android:background">@drawable/actionbar_bgd_digitallydifferent</item>
-        <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
-        <item name="titleTextStyle">@android:color/white</item>
-    </style>
-
-    <style name="Aptoide.Theme.JBlow" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.JBlow" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_magalhaes</item>
         <item name="custom_color">@color/custom_color_magalhaes</item>
         <item name="dark_custom_color">@color/dark_custom_color_magalhaes</item>
@@ -735,13 +545,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.HappyBlue" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.HappyBlue" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.Magalhaes.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_magalhaes</item>
         <item name="custom_color">@color/custom_color_magalhaes</item>
         <item name="dark_custom_color">@color/dark_custom_color_magalhaes</item>
@@ -765,13 +571,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
-    <style name="Aptoide.Theme.DarkOrange" parent="@style/Theme.Sherlock">
+    <style name="Aptoide.Theme.DarkOrange" parent="@style/Theme.Sherlock.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color_timwe</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.TimWe.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.TimWe.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_timwe</item>
         <item name="custom_color">@color/custom_color_timwe</item>
         <item name="dark_custom_color">@color/dark_custom_color_timwe</item>
@@ -795,13 +597,9 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_dark</item>
     </style>
 
-    <style name="Aptoide.Theme.GreenApple" parent="@style/Theme.Sherlock.Light">
+    <style name="Aptoide.Theme.GreenApple" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="actionBarStyle">@style/Aptoide.Theme.DigitallyDifferent.ActionBar</item>
-        <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Theme.DigitallyDifferent.ActionBar</item>
-        <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
-        <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item>
         <item name="android:buttonStyle">@style/custom_button_style_digitallydifferent</item>
         <item name="custom_color">@color/custom_color_digitallydifferent</item>
         <item name="dark_custom_color">@color/dark_custom_color_digitallydifferent</item>

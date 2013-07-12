@@ -84,7 +84,7 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 		super.onCreate(savedInstance);
 
 		setContentView(R.layout.list_sch_downloads);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 		if(!isRunning){
 			isRunning = true;
 

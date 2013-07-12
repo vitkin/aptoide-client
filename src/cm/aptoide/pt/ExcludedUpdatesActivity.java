@@ -29,7 +29,7 @@ public class ExcludedUpdatesActivity extends SherlockActivity /*SherlockActivity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.list_excluded_uploads);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 		lv = (ListView) findViewById(R.id.excluded_updates_list);
 		tv_no_excluded_downloads = (TextView) findViewById(R.id.tv_no_excluded_downloads);
 		context = this;

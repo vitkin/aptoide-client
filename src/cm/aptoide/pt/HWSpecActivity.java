@@ -31,7 +31,7 @@ public class HWSpecActivity extends SherlockActivity /*SherlockActivity */{
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.hwspecs);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 
 		sdkVer= (TextView) findViewById(R.id.sdkver);
 		screenSize = (TextView) findViewById(R.id.screenSize);

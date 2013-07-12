@@ -6,25 +6,27 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/cm.aptoide.pt"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
-        android:id="@+id/downloadManagerPageIndicator"
-        style="?attr/viewPagerIndicatorBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:footerColor="?attr/custom_color"
-        app:footerLineHeight="1dp"
-        app:selectedColor="?attr/custom_color" />
+    <!-- <cm.aptoide.com.viewpagerindicator.TitlePageIndicator -->
+    <!-- android:id="@+id/downloadManagerPageIndicator" -->
+    <!-- style="?attr/viewPagerIndicatorBackground" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- app:footerColor="?attr/custom_color" -->
+    <!-- app:footerLineHeight="1dp" -->
+    <!-- app:selectedColor="?attr/custom_color" /> -->
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/downloadManagerViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/downloadManagerPageIndicator" />
+
+    <!-- <android.support.v4.view.ViewPager -->
+    <!-- android:id="@+id/downloadManagerViewPager" -->
+    <!-- android:layout_width="match_parent" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_below="@+id/downloadManagerPageIndicator" /> -->
+
 
     <!-- <ListView -->
     <!-- android:id="@android:id/list" -->
@@ -49,12 +51,12 @@
     <!-- android:layout_weight="1" -->
     <!-- android:orientation="vertical" > -->
 
-
-    <!-- <TextView -->
-    <!-- android:id="@+id/downloading_intro" -->
-    <!-- style="?attr/labelBackground" -->
-    <!-- android:text="@string/downloading_apps" /> -->
-
+    <TextView
+        android:id="@+id/downloading_intro"
+        style="?attr/labelBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/downloading_apps" />
 
     <!-- <LinearLayout -->
     <!-- android:layout_width="fill_parent" -->
@@ -62,12 +64,12 @@
     <!-- android:orientation="vertical" -->
     <!-- android:padding="5dp" > -->
 
-
-    <!-- <ListView -->
-    <!-- android:id="@android:id/list" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:background="?attr/custom_inside_background_color" /> -->
+    <ListView
+        android:id="@+id/downloading_list"
+        android:layout_width="fill_parent"
+        android:layout_height="152dp"
+        android:layout_weight="0.25"
+        android:background="?attr/custom_inside_background_color" />
     <!-- </LinearLayout> -->
     <!-- </LinearLayout> -->
 
@@ -79,12 +81,12 @@
     <!-- android:layout_weight="1" -->
     <!-- android:orientation="vertical" > -->
 
-
-    <!-- <TextView -->
-    <!-- android:id="@+id/downloaded_intro" -->
-    <!-- style="?attr/labelBackground" -->
-    <!-- android:text="@string/downloaded_apps" /> -->
-
+    <TextView
+        android:id="@+id/downloaded_intro"
+        style="?attr/labelBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/downloaded_apps" />
 
     <!-- <LinearLayout -->
     <!-- android:layout_width="fill_parent" -->
@@ -92,12 +94,12 @@
     <!-- android:orientation="vertical" -->
     <!-- android:padding="5dp" > -->
 
-
-    <!-- <ListView -->
-    <!-- android:id="@+id/downloaded_list" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:background="?attr/custom_inside_background_color" /> -->
+    <ListView
+        android:id="@+id/downloaded_list"
+        android:layout_width="match_parent"
+        android:layout_height="146dp"
+        android:layout_weight="0.25"
+        android:background="?attr/custom_inside_background_color" />
     <!-- </LinearLayout> -->
     <!-- </LinearLayout> -->
 
@@ -149,7 +151,7 @@
     <!-- android:layout_alignParentBottom="true" -->
     <!-- android:text="@string/back" /> -->
 
-</RelativeLayout><!--
+</LinearLayout><!--
  * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *

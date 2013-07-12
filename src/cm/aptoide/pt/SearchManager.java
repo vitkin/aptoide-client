@@ -48,7 +48,7 @@ public class SearchManager extends SherlockFragmentActivity implements LoaderCal
 		System.out.println("onCreate Search");
 		db = Database.getInstance();
 		setContentView(R.layout.searchmanager);
-		getSupportActionBar().hide();
+//		getSupportActionBar().hide();
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");
 		}else{

@@ -355,47 +355,50 @@ public class DownloadManager extends SherlockFragmentActivity {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 
-		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
-			getSupportActionBar().setIcon(R.drawable.brand_jblow);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("magalhaes")){
-			getSupportActionBar().setIcon(R.drawable.brand_magalhaes);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("timwe")){
-			getSupportActionBar().setIcon(R.drawable.brand_timwe);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("digitallydifferent")){
-			getSupportActionBar().setIcon(R.drawable.brand_digitallydifferent);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
-			getSupportActionBar().setIcon(R.drawable.brand_eocean);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("educomp")){
-			getSupportActionBar().setIcon(R.drawable.brand_educomp);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("peoplenet")){
-			getSupportActionBar().setIcon(R.drawable.brand_peoplenet);
-		}else if(ApplicationAptoide.BRAND!=null){
-			getSupportActionBar().setIcon(getBrandDrawableResource());
-		}else{
-			getSupportActionBar().setIcon(R.drawable.brand_aptoide_padding);
-		}
-		
-		getSupportActionBar().setTitle(getString(R.string.download_manager));
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
+//			getSupportActionBar().setIcon(R.drawable.brand_jblow);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("magalhaes")){
+//			getSupportActionBar().setIcon(R.drawable.brand_magalhaes);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("timwe")){
+//			getSupportActionBar().setIcon(R.drawable.brand_timwe);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("digitallydifferent")){
+//			getSupportActionBar().setIcon(R.drawable.brand_digitallydifferent);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
+//			getSupportActionBar().setIcon(R.drawable.brand_eocean);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("educomp")){
+//			getSupportActionBar().setIcon(R.drawable.brand_educomp);
+//		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("peoplenet")){
+//			getSupportActionBar().setIcon(R.drawable.brand_peoplenet);
+//		}else if(ApplicationAptoide.BRAND!=null){
+//			getSupportActionBar().setIcon(getBrandDrawableResource());
+//		}else{
+//			getSupportActionBar().setIcon(R.drawable.brand_aptoide_padding);
+//		}
+//		getSupportActionBar().setTitle(getString(R.string.download_manager));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         BusProvider.getInstance().register(this);
         setContentView(R.layout.download_manager);
-        ViewPager vp = (ViewPager) findViewById(R.id.downloadManagerViewPager);
+//        ViewPager vp = (ViewPager) findViewById(R.id.downloadManagerViewPager);
 
-        ArrayList<View> views = new ArrayList<View>();
-        onGoingList = new ListView(this);
-        notOngoingList = new ListView(this);
+//        ArrayList<View> views = new ArrayList<View>();
+//        onGoingList = new ListView(this);
+//        notOngoingList = new ListView(this);
 
-        views.add(onGoingList);
-        views.add(notOngoingList);
-        ViewPagerAdapter adapter = new ViewPagerAdapter(this, views);
-        vp.setAdapter(adapter);
-        adapter.setTitles(new String[]{getString(R.string.downloading_apps), getString(R.string.downloaded_apps)});
-        TitlePageIndicator pageIndicator = (TitlePageIndicator) findViewById(R.id.downloadManagerPageIndicator);
-        pageIndicator.setViewPager(vp);
+        onGoingList = (ListView) findViewById(R.id.downloading_list);
+        notOngoingList = (ListView) findViewById(R.id.downloaded_list);
+        
+//        views.add(onGoingList);
+//        views.add(notOngoingList);
+//        ViewPagerAdapter adapter = new ViewPagerAdapter(this, views);
+//        vp.setAdapter(adapter);
+//        adapter.setTitles(new String[]{getString(R.string.downloading_apps), getString(R.string.downloaded_apps)});
+//        TitlePageIndicator pageIndicator = (TitlePageIndicator) findViewById(R.id.downloadManagerPageIndicator);
+//        pageIndicator.setViewPager(vp);
 
-
+        onGoingList.setAdapter(onGoingadapter);
+        notOngoingList.setAdapter(notOngoingAdapter);
 
         registerForContextMenu(onGoingList);
 
@@ -437,44 +440,44 @@ public class DownloadManager extends SherlockFragmentActivity {
 
 	}
 
-    private int getBrandDrawableResource() {
-    	int brandDrawableResource = this.getResources().getIdentifier("brand_aptoide_padding", "drawable", this.getPackageName());
-		EnumAptoideThemes enumAptoideTheme = null;
-		String aptoideThemeString = "APTOIDE_THEME_"+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
-		try {
-			enumAptoideTheme = EnumAptoideThemes.valueOf(aptoideThemeString);
-		} catch (Exception e) {
-			enumAptoideTheme = EnumAptoideThemes.APTOIDE_THEME_DEFAULT;
-		}
-		switch(enumAptoideTheme){
-		case APTOIDE_THEME_DIGITALLYDIFFERENT:
-			brandDrawableResource = this.getResources().getIdentifier("brand_digitallydifferent", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-		case APTOIDE_THEME_EOCEAN:
-			brandDrawableResource = this.getResources().getIdentifier("brand_eocean", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-		case APTOIDE_THEME_JBLOW:
-			brandDrawableResource = this.getResources().getIdentifier("brand_jblow", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-		case APTOIDE_THEME_LAZERPLAY:
-			brandDrawableResource = this.getResources().getIdentifier("brand_lazerplay", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-		case APTOIDE_THEME_MAGALHAES:
-			brandDrawableResource = this.getResources().getIdentifier("brand_magalhaes", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-		case APTOIDE_THEME_TIMWE:
-			brandDrawableResource = this.getResources().getIdentifier("brand_timwe", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
-			break;
-
-		}
-		return brandDrawableResource;
-	}
+//    private int getBrandDrawableResource() {
+//    	int brandDrawableResource = this.getResources().getIdentifier("brand_aptoide_padding", "drawable", this.getPackageName());
+//		EnumAptoideThemes enumAptoideTheme = null;
+//		String aptoideThemeString = "APTOIDE_THEME_"+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
+//		try {
+//			enumAptoideTheme = EnumAptoideThemes.valueOf(aptoideThemeString);
+//		} catch (Exception e) {
+//			enumAptoideTheme = EnumAptoideThemes.APTOIDE_THEME_DEFAULT;
+//		}
+//		switch(enumAptoideTheme){
+//		case APTOIDE_THEME_DIGITALLYDIFFERENT:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_digitallydifferent", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//		case APTOIDE_THEME_EOCEAN:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_eocean", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//		case APTOIDE_THEME_JBLOW:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_jblow", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//		case APTOIDE_THEME_LAZERPLAY:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_lazerplay", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//		case APTOIDE_THEME_MAGALHAES:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_magalhaes", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//		case APTOIDE_THEME_TIMWE:
+//			brandDrawableResource = this.getResources().getIdentifier("brand_timwe", "drawable", this.getPackageName());
+//			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+//			break;
+//
+//		}
+//		return brandDrawableResource;
+//	}
 
 
 	@Override
