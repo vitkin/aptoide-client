@@ -206,6 +206,8 @@ public class ApplicationAptoide extends Application {
                 e.printStackTrace();
             } catch (SAXException e) {
                 e.printStackTrace();
+            } catch (Exception e){
+                e.printStackTrace();
             }
 
         }else{
