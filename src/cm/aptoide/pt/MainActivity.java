@@ -1849,7 +1849,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 if(ApplicationAptoide.isRestartLauncher() && !ApplicationAptoide.BRAND.equals("brand_aptoide")){
                     AlertDialog ad = new AlertDialog.Builder(this).create();
                     ad.setCancelable(false);
-                    ad.setMessage("We need to restart your launcher. Continue?");
+                    ad.setMessage(getString(R.string.restart_launcher));
                     ad.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -396,4 +396,6 @@
 	<string name="one_new_update">There is %s new update available!</string>
 	<string name="has_updates">%s has new update(s) available!</string>
     <string name="powered_by">Powered by</string>
+    
+    <string name="restart_launcher">%s is going to restart your launcher in order to maintain your preferences. Click OK to continue.</string>
 </resources>
