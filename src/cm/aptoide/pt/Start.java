@@ -174,8 +174,7 @@ public class Start extends SherlockActivity {
 
 			try {
 				outStream = new FileOutputStream(file);
-				bbicon.compress(Bitmap.CompressFormat.PNG, 100,
-						outStream);
+				bbicon.compress(Bitmap.CompressFormat.PNG, 100,outStream);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch(Exception e){

@@ -209,6 +209,23 @@ public class ManagerPreferences{
             return permissions;
         }
 
+    public static void removePreviousShortcuts2(Context context) {
+
+        final Intent intent = new Intent();
+        Log.d("ManagerPreferences", "Removing Icon");
+        Intent shortcutIntent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
+
+        //		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);
+        intent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+
+        context.sendBroadcast(intent);
+
+
+    }
+
     //	public void setAutomaticInstall(boolean on){
     //		setPreferences.putBoolean(EnumPreferences.AUTOMATIC_INSTALL.name(), on);
     //		setPreferences.commit();

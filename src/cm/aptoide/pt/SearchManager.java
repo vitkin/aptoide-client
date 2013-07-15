@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt.util.Base64;
 
 import java.util.Locale;
 
@@ -77,8 +79,8 @@ public class SearchManager extends SherlockFragmentActivity implements LoaderCal
 		searchButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				String url = "http://m.aptoide.com/searchview.php?search="+query+filters();
-
+				String url = "http://m.aptoide.com/searchview.php?search="+query+"&q="+encode64(filters()).replace("=","").replace("/","*").replace("+","_");
+                Log.d("TAG", "Searching for:" + url);
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				startActivity(i);
@@ -124,6 +126,12 @@ public class SearchManager extends SherlockFragmentActivity implements LoaderCal
 		});
 	}
 
+    private String encode64(String filters) {
+
+        return Base64.encodeToString(filters.getBytes(),0);
+
+    }
+
     private String filters() {
 
         int minSdk = HWSpecifications.getSdkVer();
@@ -141,7 +149,7 @@ public class SearchManager extends SherlockFragmentActivity implements LoaderCal
             cpuAbi = Build.CPU_ABI;
         }
 
-        return "&maxSdk="+minSdk+"&maxScreen="+minScreen+"&maxGles="+minGlEs+"&cpuAbi="+cpuAbi;
+        return "maxSdk="+minSdk+"&maxScreen="+minScreen+"&maxGles="+minGlEs+"&cpuAbi="+cpuAbi;
     }
 
 

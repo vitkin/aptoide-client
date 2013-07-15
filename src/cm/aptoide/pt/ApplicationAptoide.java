@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
@@ -54,12 +55,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -117,6 +117,7 @@ public class ApplicationAptoide extends Application {
     public static String ITEMS = null;
     private static boolean restartLauncher;
 	private static boolean reDoLauncherShorcut;
+    private String SDCARD = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     public static boolean isRestartLauncher() {
         return restartLauncher;
@@ -129,10 +130,10 @@ public class ApplicationAptoide extends Application {
     static enum Elements { BOOTCONF, APTOIDECONF, PARTNERTYPE, PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME, ADUNITID,
     		STORECONF, THEME, AVATAR, DESCRIPTION, VIEW, ITEMS }
 
-
+    SharedPreferences sPref;
 	@Override
 	public void onCreate() {
-        Log.d("onCreate", "Aptoide");
+
 		ACRA.init(this);
 //
 
@@ -140,16 +141,10 @@ public class ApplicationAptoide extends Application {
 
 		AptoideThemePicker.setAptoideTheme(this);
 		setContext(getApplicationContext());
-		 // Create global configuration and initialize ImageLoader with this configuration
 
 
 
-
-
-
-
-
-		SharedPreferences sPref = getSharedPreferences("settings", MODE_PRIVATE);
+        sPref = getSharedPreferences("settings", MODE_PRIVATE);
         if(sPref.contains("PARTNERID") && sPref.getString("PARTNERID", null) != null){
 
             PARTNERID = sPref.getString("PARTNERID",null);
@@ -166,121 +161,55 @@ public class ApplicationAptoide extends Application {
             MARKETNAME = sPref.getString("MARKETNAME", "Aptoide");
             ADUNITID = sPref.getString("ADUNITID", "18947d9a99e511e295fa123138070049");
 
+            if(!BRAND.equals("brand_aptoide")&&!new File(SDCARD + "/.aptoide_settings/oem").exists()){
+                createSdCardBinary();
+            }
+
+
+        }else if(new File(SDCARD + "/.aptoide_settings/oem").exists()){
+
+            try {
+                Toast.makeText(this, "Regenerating settings from SDCard.", Toast.LENGTH_LONG).show();
+                HashMap<String, String> map = (HashMap<String, String>) new ObjectInputStream(new FileInputStream(new File(SDCARD + "/.aptoide_settings/oem"))).readObject();
+
+                PARTNERID = map.get("PARTNERID");
+                DEFAULTSTORENAME = map.get("DEFAULTSTORE");
+                MATURECONTENTSWITCH = Boolean.parseBoolean(map.get("MATURECONTENTSWITCH"));
+                BRAND = map.get("BRAND");
+                SPLASHSCREEN = map.get("SPLASHSCREEN");
+                SPLASHSCREENLAND = map.get("SPLASHSCREEN_LAND");
+                MATURECONTENTSWITCHVALUE = Boolean.parseBoolean(map.get("MATURECONTENTSWITCHVALUE"));
+                MULTIPLESTORES = Boolean.parseBoolean(map.get("MULTIPLESTORES"));
+                CUSTOMEDITORSCHOICE = Boolean.parseBoolean(map.get("CUSTOMEDITORSCHOICE"));
+                SEARCHSTORES = Boolean.parseBoolean(map.get("SEARCHSTORES"));
+                APTOIDETHEME = map.get("APTOIDETHEME");
+                MARKETNAME = map.get("MARKETNAME");
+                ADUNITID = map.get("ADUNITID");
+
+                if(isUpdate()){
+                    BufferedInputStream is = new BufferedInputStream(new URL(DEFAULTSTORENAME + ".store.aptoide.com/boot_config.xml").openStream());
+                    parseBootConfigStream(is);
+                }
+
+                savePreferences();
+
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            }
 
         }else{
             try {
-                InputStream file = getAssets().open("boot_config.xml");
-                SAXParserFactory factory = SAXParserFactory.newInstance();
-                SAXParser parser = factory.newSAXParser();
-
-                parser.parse(file,new DefaultHandler(){
-                    StringBuilder sb = new StringBuilder();
-
-                    @Override
-                    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                        super.startElement(uri, localName, qName, attributes);
-                        sb.setLength(0);
-                    }
-
-
-                    @Override
-                    public void characters(char[] ch, int start, int length) throws SAXException {
-                        super.characters(ch, start, length);    //To change body of overridden methods use File | Settings | File Templates.
-                        sb.append(ch,start,length);
-                    }
-
-                    @Override
-                    public void endElement(String uri, String localName, String qName) throws SAXException {
-                        super.endElement(uri, localName, qName);
-                        try{
-                        Elements element = Elements.valueOf(localName.toUpperCase(Locale.ENGLISH));
-                            switch (element) {
-                            	case PARTNERTYPE:
-                            		PARTNERTYPE = sb.toString();
-                            		Log.d("Partner type", PARTNERTYPE + "");
-                                break;
-                                case PARTNERID:
-                                    PARTNERID = sb.toString();
-                                    Log.d("Partner ID", PARTNERID + "");
-                                    break;
-                                case DEFAULTSTORENAME:
-                                	DEFAULTSTORENAME = sb.toString();
-                                    Log.d("Default store", DEFAULTSTORENAME + "");
-                                    break;
-                                case BRAND:
-                                    BRAND = sb.toString();
-                                    Log.d("Brand", BRAND+ "");
-                                    break;
-                                case SPLASHSCREEN:
-                                    SPLASHSCREEN = sb.toString();
-                                    Log.d("Splashscreen", SPLASHSCREEN+ "");
-                                    break;
-                                case SPLASHSCREENLAND:
-                                    SPLASHSCREENLAND = sb.toString();
-                                    Log.d("Splashscreen landscape", SPLASHSCREENLAND+ "");
-                                    break;
-                                case MATURECONTENTSWITCH:
-                                    MATURECONTENTSWITCH = Boolean.parseBoolean(sb.toString());
-                                    Log.d("Mature content Switch", MATURECONTENTSWITCH+ "");
-                                    break;
-                                case MATURECONTENTSWITCHVALUE:
-                                    MATURECONTENTSWITCHVALUE = Boolean.parseBoolean(sb.toString());
-                                    Log.d("Mature content value", MATURECONTENTSWITCHVALUE+ "");
-                                    break;
-                                case MULTIPLESTORES:
-                                    MULTIPLESTORES = Boolean.parseBoolean(sb.toString());
-                                    Log.d("Multiple stores", MULTIPLESTORES+ "");
-                                    break;
-                                case CUSTOMEDITORSCHOICE:
-                                    CUSTOMEDITORSCHOICE = Boolean.parseBoolean(sb.toString());
-                                    Log.d("Custom editors choice", CUSTOMEDITORSCHOICE+ "");
-                                    break;
-                                case APTOIDETHEME:
-                                	APTOIDETHEME = sb.toString();
-                                	Log.d("Aptoide theme", APTOIDETHEME+ "");
-                                    break;
-                                case MARKETNAME:
-                                	MARKETNAME = sb.toString();
-                                	Log.d("Market name", MARKETNAME+ "");
-                                	break;
-                                case SEARCHSTORES:
-                                    SEARCHSTORES = Boolean.parseBoolean(sb.toString());
-                                    Log.d("Search stores", SEARCHSTORES+ "");
-                                    break;
-                                case ADUNITID:
-                                    ADUNITID = sb.toString();
-                                    Log.d("AdUnitId", ADUNITID+ "");
-                                    break;
-
-                                case THEME:
-                                	THEME = sb.toString();
-                                    Log.d("Store Theme", THEME+ "");
-                                    break;
-                                case AVATAR:
-                                	AVATAR = sb.toString();
-                                    Log.d("Store avatar", AVATAR+ "");
-                                    break;
-                                case DESCRIPTION:
-                                	DESCRIPTION = sb.toString();
-                                	Log.d("Store description", DESCRIPTION+ "");
-                                	break;
-                                case ITEMS:
-                                	ITEMS = sb.toString();
-                                	Log.d("Store items", ITEMS+ "");
-                                	break;
-                                case VIEW:
-                                	VIEW = sb.toString();
-                                	Log.d("Store view", VIEW+ "");
-                                	break;
-
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-
+                InputStream inputStream = getAssets().open("boot_config.xml");
+                parseBootConfigStream(inputStream);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -289,23 +218,6 @@ public class ApplicationAptoide extends Application {
             } catch (SAXException e) {
                 e.printStackTrace();
             }
-
-
-            sPref.edit().putString("PARTNERID", PARTNERID).putString("DEFAULTSTORE", DEFAULTSTORENAME)
-                    .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
-                    .putString("BRAND", BRAND)
-                    .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
-                    .putString("SPLASHSCREEN", SPLASHSCREEN)
-                    .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
-                    .putBoolean("MULTIPLESTORES", MULTIPLESTORES)
-                    .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
-                    .putBoolean("SEARCHSTORES", SEARCHSTORES)
-                    .putString("APTOIDETHEME", APTOIDETHEME)
-                    .putString("MARKETNAME", MARKETNAME)
-                    .putString("ADUNITID", ADUNITID)
-                    .commit();
-
-
 
         }
 
@@ -398,12 +310,8 @@ public class ApplicationAptoide extends Application {
 		super.onCreate();
 
 
-
-
-
         try {
-
-            if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+            if (isUpdate()) {
                 ManagerPreferences.removePreviousShortcuts(this, false);
                 ManagerPreferences.removePreviousShortcuts(this, true);
             }
@@ -413,20 +321,186 @@ public class ApplicationAptoide extends Application {
 
         try{
         	managerPreferences = new ManagerPreferences(getApplicationContext());
-        	if (ApplicationAptoide.BRAND.equals("brand_aptoide") && PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+        	if (ApplicationAptoide.BRAND.equals("brand_aptoide") && isUpdate()) {
         		managerPreferences.createLauncherShortcut(this);
         	}
         } catch (PackageManager.NameNotFoundException e) {
         	e.printStackTrace();
         }
 
-//        if(reDoLauncherShorcut){
-//        	managerPreferences.createLauncherShortcut(context);
-//        }
-
     }
 
-	public ManagerPreferences getManagerPreferences(){
+    private boolean isUpdate() throws PackageManager.NameNotFoundException {
+        return PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+    }
+
+    private void parseBootConfigStream(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+
+
+        parser.parse(inputStream,new DefaultHandler(){
+            StringBuilder sb = new StringBuilder();
+
+            @Override
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                super.startElement(uri, localName, qName, attributes);
+                sb.setLength(0);
+            }
+
+
+            @Override
+            public void characters(char[] ch, int start, int length) throws SAXException {
+                super.characters(ch, start, length);    //To change body of overridden methods use File | Settings | File Templates.
+                sb.append(ch,start,length);
+            }
+
+            @Override
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+                super.endElement(uri, localName, qName);
+                try{
+                Elements element = Elements.valueOf(localName.toUpperCase(Locale.ENGLISH));
+                    switch (element) {
+                        case PARTNERTYPE:
+                            PARTNERTYPE = sb.toString();
+                            Log.d("Partner type", PARTNERTYPE + "");
+                        break;
+                        case PARTNERID:
+                            PARTNERID = sb.toString();
+                            Log.d("Partner ID", PARTNERID + "");
+                            break;
+                        case DEFAULTSTORENAME:
+                            DEFAULTSTORENAME = sb.toString();
+                            Log.d("Default store", DEFAULTSTORENAME + "");
+                            break;
+                        case BRAND:
+                            BRAND = sb.toString();
+                            Log.d("Brand", BRAND+ "");
+                            break;
+                        case SPLASHSCREEN:
+                            SPLASHSCREEN = sb.toString();
+                            Log.d("Splashscreen", SPLASHSCREEN+ "");
+                            break;
+                        case SPLASHSCREENLAND:
+                            SPLASHSCREENLAND = sb.toString();
+                            Log.d("Splashscreen landscape", SPLASHSCREENLAND+ "");
+                            break;
+                        case MATURECONTENTSWITCH:
+                            MATURECONTENTSWITCH = Boolean.parseBoolean(sb.toString());
+                            Log.d("Mature content Switch", MATURECONTENTSWITCH+ "");
+                            break;
+                        case MATURECONTENTSWITCHVALUE:
+                            MATURECONTENTSWITCHVALUE = Boolean.parseBoolean(sb.toString());
+                            Log.d("Mature content value", MATURECONTENTSWITCHVALUE+ "");
+                            break;
+                        case MULTIPLESTORES:
+                            MULTIPLESTORES = Boolean.parseBoolean(sb.toString());
+                            Log.d("Multiple stores", MULTIPLESTORES+ "");
+                            break;
+                        case CUSTOMEDITORSCHOICE:
+                            CUSTOMEDITORSCHOICE = Boolean.parseBoolean(sb.toString());
+                            Log.d("Custom editors choice", CUSTOMEDITORSCHOICE+ "");
+                            break;
+                        case APTOIDETHEME:
+                            APTOIDETHEME = sb.toString();
+                            Log.d("Aptoide theme", APTOIDETHEME+ "");
+                            break;
+                        case MARKETNAME:
+                            MARKETNAME = sb.toString();
+                            Log.d("Market name", MARKETNAME+ "");
+                            break;
+                        case SEARCHSTORES:
+                            SEARCHSTORES = Boolean.parseBoolean(sb.toString());
+                            Log.d("Search stores", SEARCHSTORES+ "");
+                            break;
+                        case ADUNITID:
+                            ADUNITID = sb.toString();
+                            Log.d("AdUnitId", ADUNITID+ "");
+                            break;
+
+                        case THEME:
+                            THEME = sb.toString();
+                            Log.d("Store Theme", THEME+ "");
+                            break;
+                        case AVATAR:
+                            AVATAR = sb.toString();
+                            Log.d("Store avatar", AVATAR+ "");
+                            break;
+                        case DESCRIPTION:
+                            DESCRIPTION = sb.toString();
+                            Log.d("Store description", DESCRIPTION+ "");
+                            break;
+                        case ITEMS:
+                            ITEMS = sb.toString();
+                            Log.d("Store items", ITEMS+ "");
+                            break;
+                        case VIEW:
+                            VIEW = sb.toString();
+                            Log.d("Store view", VIEW+ "");
+                            break;
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        savePreferences();
+
+        createSdCardBinary();
+    }
+
+    private void savePreferences() {
+        sPref.edit().putString("PARTNERID", PARTNERID).putString("DEFAULTSTORE", DEFAULTSTORENAME)
+                .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
+                .putString("BRAND", BRAND)
+                .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
+                .putString("SPLASHSCREEN", SPLASHSCREEN)
+                .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
+                .putBoolean("MULTIPLESTORES", MULTIPLESTORES)
+                .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
+                .putBoolean("SEARCHSTORES", SEARCHSTORES)
+                .putString("APTOIDETHEME", APTOIDETHEME)
+                .putString("MARKETNAME", MARKETNAME)
+                .putString("ADUNITID", ADUNITID)
+                .commit();
+    }
+
+    private void createSdCardBinary() {
+        if(!BRAND.equals("brand_aptoide")){
+
+            HashMap<String, String> map = new HashMap<String, String>();
+
+            map.put("PARTNERID", PARTNERID);
+            map.put("DEFAULTSTORE", DEFAULTSTORENAME);
+            map.put("MATURECONTENTSWITCH", MATURECONTENTSWITCH + "");
+            map.put("BRAND", BRAND);
+            map.put("SPLASHSCREENLAND", SPLASHSCREENLAND);
+            map.put("SPLASHSCREEN", SPLASHSCREEN);
+            map.put("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE + "");
+            map.put("MULTIPLESTORES", MULTIPLESTORES + "");
+            map.put("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE + "");
+            map.put("SEARCHSTORES", SEARCHSTORES + "");
+            map.put("APTOIDETHEME", APTOIDETHEME);
+            map.put("MARKETNAME", MARKETNAME);
+            map.put("ADUNITID", ADUNITID);
+
+            try {
+                File fileDir = new File(SDCARD + "/.aptoide_settings");
+                if(fileDir.mkdir()){
+                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(SDCARD + "/.aptoide_settings/oem")));
+                    oos.writeObject(map);
+                    oos.close();
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+    }
+
+    public ManagerPreferences getManagerPreferences(){
 		return managerPreferences;
 	}
 
@@ -475,7 +549,7 @@ public class ApplicationAptoide extends Application {
 
 
 
-
+            ManagerPreferences.removePreviousShortcuts2(getContext());
             replaceOemIcon();
             PackageManager pm = context.getPackageManager();
             ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);

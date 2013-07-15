@@ -955,6 +955,11 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 	protected void addStore(String uri_str, String username, String password) {
 
+
+        if(!uri_str.contains(".")){
+            uri_str = uri_str.concat(".store.aptoide.com");
+        }
+
         uri_str = RepoUtils.formatRepoUri(uri_str);
 
         if(uri_str.contains("bazaarandroid.com")){
