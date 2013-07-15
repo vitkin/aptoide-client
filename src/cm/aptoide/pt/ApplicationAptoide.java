@@ -166,6 +166,8 @@ public class ApplicationAptoide extends Application {
             }
 
 
+
+
         }else if(new File(SDCARD + "/.aptoide_settings/oem").exists()){
 
             try {
@@ -187,7 +189,7 @@ public class ApplicationAptoide extends Application {
                 ADUNITID = map.get("ADUNITID");
 
                 if(isUpdate()){
-                    BufferedInputStream is = new BufferedInputStream(new URL(DEFAULTSTORENAME + ".store.aptoide.com/boot_config.xml").openStream());
+                    BufferedInputStream is = new BufferedInputStream(new URL("http://"+ DEFAULTSTORENAME + ".store.aptoide.com/boot_config.xml").openStream());
                     parseBootConfigStream(is);
                 }
 
