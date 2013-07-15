@@ -1,5 +1,6 @@
 package cm.aptoide.pt.services;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -128,7 +129,8 @@ public class ServiceManagerDownload extends Service {
         } catch (Exception e) { }
     }
 
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onTaskRemoved(Intent rootIntent) {
 
         DownloadManager.INSTANCE.removeAllActiveDownloads();
@@ -204,6 +206,22 @@ public class ServiceManagerDownload extends Service {
 
 
     }
+
+	public void clearCompletedDownloads() {
+		ArrayList<DownloadInfo> list = new ArrayList<DownloadInfo>();
+		list.addAll(getDownloads());
+		Iterator<DownloadInfo> it = list.iterator();
+		while(it.hasNext()){
+			DownloadInfo downloadInfo = it.next();
+			if(downloadInfo.getStatusState().getEnumState().equals(EnumState.COMPLETE) ){
+                downloads.remove(downloadInfo.getId());
+                DownloadManager.INSTANCE.removeFromCompletedList(downloadInfo);
+            }
+        }
+		
+		BusProvider.getInstance().post(new DownloadStatusEvent());
+		
+	}
 
 
 }

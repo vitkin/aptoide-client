@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
@@ -115,6 +116,8 @@ public class DownloadManager extends SherlockFragmentActivity {
 
             onGoingListView.setAdapter(onGoingadapter);
             notOngoingListView.setAdapter(notOngoingAdapter);
+            
+            refreshListViews();
 
         }
 
@@ -292,28 +295,25 @@ public class DownloadManager extends SherlockFragmentActivity {
 
     @Subscribe
     public void onDownloadTick(DownloadInfo download){
-
-        try{
-            ListView list = onGoingListView;
-            int start = list.getFirstVisiblePosition();
-            for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
-                if (download == list.getItemAtPosition(i)) {
-                    View view = list.getChildAt(i - start);
-                    list.getAdapter().getView(i, view, list);
-                    break;
-                }
-        }catch (Exception e){
-            ListView list = notOngoingListView;
-            int start = list.getFirstVisiblePosition();
-            for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
-                if (download == list.getItemAtPosition(i)) {
-                    View view = list.getChildAt(i - start);
-                    list.getAdapter().getView(i, view, list);
-                    break;
-                }
-        }
-
+            refreshDownload(download, onGoingListView);
+            refreshDownload(download, notOngoingListView);
     }
+
+
+	private void refreshDownload(DownloadInfo download, ListView list) {
+		try{
+			int start = list.getFirstVisiblePosition();
+			for (int i = start, j = list.getLastVisiblePosition(); i <= j; i++)
+			    if (download == list.getItemAtPosition(i)) {
+			        View view = list.getChildAt(i - start);
+			        list.getAdapter().getView(i, view, list);
+			        break;
+			    }
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
 
     @Subscribe public void onDownloadEvent(DownloadStatusEvent event){
         runOnUiThread(new Runnable() {
@@ -324,17 +324,21 @@ public class DownloadManager extends SherlockFragmentActivity {
 
                 onGoingArrayList.clear();
                 onGoingArrayList.addAll(dm.getOngoingDownloads());
-
+                sort(onGoingArrayList);
+                onGoingadapter.notifyDataSetChanged();
+                
                 notOnGoingArrayList.clear();
                 notOnGoingArrayList.addAll(dm.getNotOngoingDownloads());
-
-                sort(onGoingArrayList);
-
-                onGoingadapter.notifyDataSetChanged();
                 notOngoingAdapter.notifyDataSetChanged();
+                
+                refreshListViews();
+                
+                
             }
         });
 
+        
+        
 
     }
     
@@ -418,7 +422,7 @@ public class DownloadManager extends SherlockFragmentActivity {
         onGoingTextView = (TextView) findViewById(R.id.downloading_intro);
         notOngoingTextView = (TextView) findViewById(R.id.downloaded_intro);
         
-//        noDownloads = (TextView) findViewById(R.id.no_downloads);
+        noDownloads = (TextView) findViewById(R.id.no_downloads);
         
        
 //        views.add(onGoingList);
@@ -573,7 +577,15 @@ public class DownloadManager extends SherlockFragmentActivity {
 
         @Override
         public long getItemId(int position) {
-            return getItem(position).getId();  //To change body of implemented methods use File | Settings | File Templates.
+        	
+        	long id = 0;
+        	
+        	try{
+        		id = getItem(position).getId();
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+            return id;  //To change body of implemented methods use File | Settings | File Templates.
         }
 
 
@@ -828,34 +840,20 @@ public class DownloadManager extends SherlockFragmentActivity {
 //		return super.onContextItemSelected(item);
 //	}
 
-//	@Override
-//	public boolean onPrepareOptionsMenu(Menu menu) {
-//		menu.clear();
-//		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
-//
-//		return super.onPrepareOptionsMenu(menu);
-//	}
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
+
+		return super.onPrepareOptionsMenu(menu);
+	}
 
 //	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			finish();
-			return true;
-		}
+		
 		switch (item.getItemId()) {
 		case 0:
-			Log.d("Aptoide-DownloadManager", "clear all");
-
-			if(downloadedAdapter.getCount()>0 || notDownloadedAdapter.getCount()>0){
-				try {
-					serviceManager.callClearDownloads();
-					downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
-					notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+				dm.clearCompletedDownloads();
 			break;
 		default:
 			break;

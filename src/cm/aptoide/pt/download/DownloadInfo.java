@@ -173,8 +173,9 @@ public class DownloadInfo implements Runnable{
             changeStatusState(new ErrorState(this, EnumDownloadFailReason.NO_REASON));
             e.printStackTrace();
         }
-        BusProvider.getInstance().post(new DownloadStatusEvent());
         BusProvider.getInstance().post(DownloadInfo.this);
+        BusProvider.getInstance().post(new DownloadStatusEvent());
+        
 
         threads.clear();
         mDownloadedSize = 0;
