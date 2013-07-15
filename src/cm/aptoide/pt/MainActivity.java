@@ -1852,36 +1852,43 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 }
 
                 if(ApplicationAptoide.isRestartLauncher() && !ApplicationAptoide.BRAND.equals("brand_aptoide")){
-                    AlertDialog ad = new AlertDialog.Builder(this).create();
-                    ad.setCancelable(false);
-                    ad.setMessage(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
-                    ad.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-
-
-                            ApplicationAptoide.restartLauncher(MainActivity.this);
-                            ApplicationAptoide.setRestartLauncher(false);
-
+                    
+                	View simpleLayoutView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+                	Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleLayoutView);
+                	final AlertDialog restartLauncherDialog = dialogBuilder.create();
+                	restartLauncherDialog.setTitle(getString(R.string.payment_warning_title));
+                	restartLauncherDialog.setIcon(android.R.drawable.ic_menu_info_details);
+                	restartLauncherDialog.setCancelable(false);
+                	
+                	restartLauncherDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
+        				@Override
+        				public void onClick(DialogInterface arg0, int arg1) {
+        					ApplicationAptoide.restartLauncher(MainActivity.this);
+        					ApplicationAptoide.setRestartLauncher(false);
+        			    }
+        			});
+                	restartLauncherDialog.show();
+                	
+//                	AlertDialog ad = new AlertDialog.Builder(this).create();
+//                    ad.setCancelable(false);
+//                    ad.setMessage(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
+//                    ad.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            ApplicationAptoide.restartLauncher(MainActivity.this);
+//                            ApplicationAptoide.setRestartLauncher(false);
 //                            ManagerPreferences.removePreviousShortcuts(MainActivity.this, false);
 //                            ManagerPreferences.removePreviousShortcuts(MainActivity.this, true);
-//
 //                            Handler handler = new Handler();
-//
 //                            handler.postDelayed(new Runnable() {
 //                                @Override
 //                                public void run() {
-//
 //                                    new ManagerPreferences(MainActivity.this).createLauncherShortcut(MainActivity.this);
-//
 //                                }
 //                            },5000);
-
-
-                        }
-                    });
-                    ad.show();
+//                        }
+//                    });
+//                    ad.show();
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
@@ -1909,6 +1916,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			@Override
 			public void onClick(View v) {
 				updateAll();
+				Toast toast = Toast.makeText(mContext, mContext.getString(R.string.starting_download), Toast.LENGTH_SHORT);
+				toast.show();
 			}
 		});
 
