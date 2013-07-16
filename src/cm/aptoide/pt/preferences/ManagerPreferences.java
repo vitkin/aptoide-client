@@ -23,7 +23,6 @@ package cm.aptoide.pt.preferences;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -53,21 +52,17 @@ public class ManagerPreferences{
             Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
             if(getAptoideClientUUID() == null){
 //    			createLauncherShortcut(context);
-
                 setAptoideClientUUID( UUID.randomUUID().toString() );
-                try {
-                    setAptoideVersionName(context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName);
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
             }
         }
 
 
 
-    public void setAptoideVersionName(String aptoideVersionName){
-        setPreferences.putString("versionName", aptoideVersionName);
-        setPreferences.commit();
+    public static void setAptoideVersionName(Context context, String aptoideVersionName){
+
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString("versionName", aptoideVersionName);
+        PreferenceManager.getDefaultSharedPreferences(context).edit().commit();
+
     }
 
         public void createLauncherShortcut(Context context){

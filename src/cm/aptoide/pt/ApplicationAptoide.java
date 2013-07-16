@@ -150,7 +150,7 @@ public class ApplicationAptoide extends Application {
             PARTNERID = sPref.getString("PARTNERID",null);
             DEFAULTSTORENAME = sPref.getString("DEFAULTSTORE",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
-            BRAND = sPref.getString("BRAND", null);
+            BRAND = sPref.getString("BRAND", "");
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
             SPLASHSCREENLAND = sPref.getString("SPLASHSCREEN_LAND", null);
             MATURECONTENTSWITCHVALUE = sPref.getBoolean("MATURECONTENTSWITCHVALUE", true);
@@ -318,6 +318,7 @@ public class ApplicationAptoide extends Application {
             if (isUpdate()) {
                 ManagerPreferences.removePreviousShortcuts(this, false);
                 ManagerPreferences.removePreviousShortcuts(this, true);
+                ManagerPreferences.setAptoideVersionName(this, this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
             }
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -331,6 +332,7 @@ public class ApplicationAptoide extends Application {
         } catch (PackageManager.NameNotFoundException e) {
         	e.printStackTrace();
         }
+
 
     }
 

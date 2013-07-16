@@ -41,11 +41,13 @@ public class DownloadExecutorImpl implements DownloadExecutor {
 
                 DataOutputStream os = new DataOutputStream(p.getOutputStream());
                 // Execute commands that require root access
-                os.writeBytes("pm install -r " + path + "\n");
+                os.writeBytes("pm install -r \"" + path + "\"\n");
                 os.flush();
                 mBuilder = new NotificationCompat.Builder(context);
 
-                Intent onClick = new Intent();
+                Intent onClick = new Intent(Intent.ACTION_VIEW);
+                onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                onClick.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
 
                 // The PendingIntent to launch our activity if the user selects this notification
                 PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
@@ -78,13 +80,21 @@ public class DownloadExecutorImpl implements DownloadExecutor {
                             p.waitFor();
 
                             String failure = output.toString();
-
-                            if (p.exitValue() != 255 && !failure.toLowerCase(Locale.ENGLISH).contains("failure")) {
+                            Log.d("TAG", failure + " " + p.exitValue());
+                            if (p.exitValue() != 255 && !failure.toLowerCase(Locale.ENGLISH).contains("failure") && !failure.toLowerCase(Locale.ENGLISH).contains("segmentation")) {
                                 // Sucess :-)
 
                                 mBuilder = new NotificationCompat.Builder(context);
 
-                                Intent onClick = new Intent(context.getPackageManager().getLaunchIntentForPackage(apk.getApkid()));
+
+
+                                Intent onClick = context.getPackageManager().getLaunchIntentForPackage(apk.getApkid());
+
+                                if(onClick == null){
+                                    onClick = new Intent(Intent.ACTION_VIEW);
+                                    onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    onClick.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
+                                }
 
                                 // The PendingIntent to launch our activity if the user selects this notification
                                 PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
@@ -108,10 +118,16 @@ public class DownloadExecutorImpl implements DownloadExecutor {
                                 Log.d("Aptoide", "Installing app: " + path);
                                 context.startActivity(install);
                             }
-                        } catch (InterruptedException e) {
+
+
+                        } catch (Exception e){
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            managerNotification.cancel(apk.getAppHashId());
+                            Intent install = new Intent(Intent.ACTION_VIEW);
+                            install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            install.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
+                            Log.d("Aptoide", "Installing app: " + path);
+                            context.startActivity(install);
                         }
 
 
@@ -121,6 +137,8 @@ public class DownloadExecutorImpl implements DownloadExecutor {
                 os.writeBytes("exit\n");
                 os.flush();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e){
                 e.printStackTrace();
             }
 

@@ -124,7 +124,7 @@ public class ServiceManagerDownload extends Service {
 
     private synchronized void dismissNotification(){
         try {
-            managerNotification.cancel(this.hashCode());
+            managerNotification.cancel(-3);
             showNotification = false;
         } catch (Exception e) { }
     }
@@ -170,9 +170,7 @@ public class ServiceManagerDownload extends Service {
         int percentage = getOngoingDownloadsPercentage();
         mBuilder.setProgress(100, percentage, percentage == 0);
         // Displays the progress bar for the first time
-
-
-        managerNotification.notify(this.hashCode(), mBuilder.build());
+        managerNotification.notify(-3, mBuilder.build());
     }
 
 
@@ -218,9 +216,9 @@ public class ServiceManagerDownload extends Service {
                 DownloadManager.INSTANCE.removeFromCompletedList(downloadInfo);
             }
         }
-		
+
 		BusProvider.getInstance().post(new DownloadStatusEvent());
-		
+
 	}
 
 

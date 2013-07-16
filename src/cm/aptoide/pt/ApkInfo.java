@@ -1568,9 +1568,13 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
             }
 
+
+
+
+
             Button b = (Button) findViewById(R.id.btinstall);
 
-             b.setEnabled(true);
+            b.setEnabled(true);
 
             b.setTextColor(Color.WHITE);
 

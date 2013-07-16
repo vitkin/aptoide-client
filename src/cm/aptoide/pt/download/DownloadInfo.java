@@ -173,9 +173,8 @@ public class DownloadInfo implements Runnable{
             changeStatusState(new ErrorState(this, EnumDownloadFailReason.NO_REASON));
             e.printStackTrace();
         }
-        BusProvider.getInstance().post(DownloadInfo.this);
-        BusProvider.getInstance().post(new DownloadStatusEvent());
-        
+
+        BusProvider.getInstance().post(new DownloadRemoveEvent(getId()));
 
         threads.clear();
         mDownloadedSize = 0;
@@ -213,8 +212,8 @@ public class DownloadInfo implements Runnable{
         double size = getDirSize(dir)/1024/1024;
         SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(ApplicationAptoide.getContext());
         long maxFileCache = Long.parseLong((sPref.getString("maxFileCache", "200")));
-
-        if(maxFileCache > 0 && size >= maxFileCache){
+        if(maxFileCache < 50) maxFileCache = 50;
+        if(maxFileCache > 0 && size > maxFileCache){
             File[] files = dir.listFiles();
             long latestTime = System.currentTimeMillis();
             long currentTime = 0;

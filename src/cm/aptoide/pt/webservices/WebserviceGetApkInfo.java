@@ -6,6 +6,7 @@ import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.views.ApkPermission;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.webservices.comments.Comment;
 import org.json.JSONArray;
@@ -163,6 +164,21 @@ public class WebserviceGetApkInfo {
 
     }
 
+    public ArrayList<ApkPermission> getApkPermissions() throws JSONException {
+
+        JSONArray permissionArray = response.getJSONArray("apk_permissions");
+
+        ArrayList<ApkPermission> list = new ArrayList<ApkPermission>();
+        for(int i = 0; i!= permissionArray.length(); i++){
+            String permission = permissionArray.getJSONObject(i).getString("permission");
+            String description = permissionArray.getJSONObject(i).getString("description");
+            list.add(new ApkPermission(permission, description));
+        }
+
+        return list;
+
+    }
+
     public String getLatestVersionURL() throws JSONException {
         return response.getString("latest");
 
@@ -272,6 +288,13 @@ public class WebserviceGetApkInfo {
         @Override
         public String toString() {
             return key+"="+value;    //To change body of overridden methods use File | Settings | File Templates.
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+
+            Log.d("TAG", "Garbage Collecting WebserviceResponse");
+            super.finalize();
         }
     }
 

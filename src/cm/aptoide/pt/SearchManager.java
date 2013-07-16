@@ -145,6 +145,9 @@ public class SearchManager extends SherlockFragmentActivity implements LoaderCal
 
         if(Build.VERSION.SDK_INT>7){
             cpuAbi = Build.CPU_ABI2;
+            if(cpuAbi.contains("unknown")){
+                cpuAbi = Build.CPU_ABI;
+            }
         }else{
             cpuAbi = Build.CPU_ABI;
         }
