@@ -9,6 +9,7 @@ package cm.aptoide.pt.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -105,7 +106,12 @@ public class NetworkUtils {
 		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mctx);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-        String verString = sPref.getString("versionName", "NoVersion");
+        String verString = null;
+        try {
+            verString = mctx.getPackageManager().getPackageInfo(mctx.getPackageName(),0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         String partnerid = "";
         if(ApplicationAptoide.PARTNERID!=null){
             partnerid = "PartnerID:"+ApplicationAptoide.PARTNERID+";";
