@@ -1858,7 +1858,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 	final AlertDialog restartLauncherDialog = dialogBuilder.create();
                 	restartLauncherDialog.setTitle(getString(R.string.payment_warning_title));
                 	restartLauncherDialog.setIcon(android.R.drawable.ic_menu_info_details);
-                	restartLauncherDialog.setMessage(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
+                	TextView message = (TextView) simpleLayoutView.findViewById(R.id.dialog_message);
+        			message.setText(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
                 	restartLauncherDialog.setCancelable(false);
                 	
                 	restartLauncherDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
