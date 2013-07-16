@@ -96,6 +96,8 @@ public class UpdatesAdapter extends CursorAdapter {
 				ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
 				Log.d("UpdatesAdapter","about to call service download manager to "+apk.getName());
 				serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk),apk);
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.starting_download), Toast.LENGTH_SHORT);
+                toast.show();
 			}
 		});
 		if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE ||
