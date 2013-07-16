@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Yhdistä kaupat</string>
   <string name="search_for_stores">Hae kauppoja</string>
   <string name="download_manager">Latauksenhallinta</string>
-  <string name="downloading_apps">Ladataan sovelluksia</string>
-  <string name="downloaded_apps">Ladatut sovellukset</string>
   <string name="no_downloads">Ei latauksia. Aloita lataaminen!</string>
   <string name="not_downloaded_apps">Ei ladattuja sovelluksia</string>
   <string name="exit">poistu</string>
@@ -52,7 +50,9 @@
   <string name="chkBoxSchDwn">Ajasta lataus</string>
   <string name="exclude_update">Ohita päivitys</string>
   <string name="restore_updates">Palauta päivityksiä</string>
+  <string name="added_to_excluded_updates_list">%s suljettiin pois päivityksistä</string>
   <string name="remove_from_excluded_updates_list">Poista ohitettujen päivitysten luettelosta</string>
+  <string name="add_to_excluded_updates_list">Tämä sovellus poistettiin päivityksistä</string>
   <string name="excluded_updates">Ohitetut päivitykset</string>
   <string name="no_excluded_updates">Ei ohitettuja päivityksiä</string>
   <string name="no_excluded_updates_selected">Ei ohitettuja päivityksiä valittuna</string>
@@ -62,7 +62,7 @@
   <string name="subject">Nimi</string>
   <string name="available_tab">Saatavissa</string>
   <string name="featured_tab">Esittelyssä</string>
-  <string name="editors_choice">Toimittajien valinnat</string>
+  <string name="editors_choice">Toimittajan valinta</string>
   <string name="top_apps">Huippusovellukset</string>
   <string name="installed_tab">Asennetut</string>
   <string name="updates_tab">Päivitykset</string>
@@ -72,7 +72,7 @@
   <string name="btn_add_repo">Lisää kauppa</string>
   <string name="number_apks">Sovellukset:</string>
   <string name="please_wait">Odota...</string>
-  <string name="search_market">Hae Google Playsta</string>
+  <string name="search_market">Hae myymälästä</string>
   <string name="status">Tila</string>
   <string name="details">Tiedot</string>
   <string name="finished_download_alrt">Lataus valmis</string>
@@ -151,6 +151,7 @@
   <string name="adult_content">Aikuisviihde</string>
   <string name="stores">Kaupat</string>
   <string name="screenshots">Näyttökuvat</string>
+  <string name="about">Kuvaus</string>
   <string name="rate_this_app">Luokittele tämä sovellus</string>
   <string name="related_apps">Liittyvät sovellukset</string>
   <string name="recommended_apps">Suositellut sovellukset</string>
@@ -165,6 +166,7 @@
   <string name="menu_rem_repo">Poista kauppa</string>
   <string name="menu_edit_repo">Muokkaa kauppaa</string>
   <string name="btn_chlog">Muutosloki</string>
+  <string name="btn_search_market">Etsi muista kauppapaikoista</string>
   <string name="no_results_found">Tuloksia ei löytynyt</string>
   <string name="found">Löydetty</string>
   <string name="results">tulos(ta)</string>
@@ -178,9 +180,10 @@
   <string name="update_done_msg1">Kaupat päivitetty onnistuneesti.</string>
   <string name="about_site">Kotisivu:</string>
   <string name="about_mail">Yhteystiedot:</string>
-  <string name="app_trusted">%s sovellus on luotettu</string>
-  <string name="app_warning">%s sovellus on varoitettu</string>
-  <string name="app_unknown">%s sovellus on tuntematon</string>
+  <string name="about_us">Tietoa meistä</string>
+  <string name="app_trusted">%s -sovellus on luotettu</string>
+  <string name="app_warning">%s -sovellus on varoitettu</string>
+  <string name="app_unknown">%s -sovellus on tuntematon</string>
   <string name="signature_verified">Sovelluksen allekirjoitus täsmää tekijän allekirjoituksen kanssa.</string>
   <string name="signature_not_verified">Sovelluksen allekirjoitus ei täsmää tekijän allekirjoituksen kanssa, joten sovellus voi olla väärennetty.</string>
   <string name="trusted_classification">Tämä sovellus skannattiin Aptoiden haittaohjelma-alustalla eikä siinä ole viruksia.</string>
@@ -198,7 +201,7 @@
   <string name="aptoide_update">Päivitä</string>
   <string name="auto_updating">Odota, kun päivityksen latausta käsitellään...</string>
   <string name="update_self_title">Päivitys saatavissa</string>
-  <string name="update_self_msg">Löydetty uusi versio sovelluksesta %s,\nhaluaisitko päivittää?</string>
+  <string name="update_self_msg">Uusi versio sovelluksesta %s löydetty,\nhaluaisitko päivittää?</string>
   <string name="md5_error">Ladatun sovelluksen md5-tarkistus epäonnistui!\nPäivitä kauppasi ennen uutta yritystä.</string>
   <string name="network_error">Sovelluksen haussa tapahtui virhe.\nYritä uudelleen.</string>
   <string name="error_404">Tiedostoa ei löytynyt annetusta kaupasta.\nYritä uudelleen myöhemmin.</string>
@@ -213,6 +216,7 @@
   <string name="aptoide_error">Etäpalvelimeen ei saada yhteyttä. Tarkista internet-yhteytesi.</string>
   <string name="no_sch_downloads">Ei ajastettuja latauksia!</string>
   <string name="size">Koko</string>
+  <string name="installed_version">Asennettu versio</string>
   <string name="schDown_install">Haluatko asentaa kaikki ajastetut lataukset?</string>
   <string name="schDown_installselected">Asenna valitut</string>
   <string name="schDown_wireless_detected">Wifi-yhteys havaittu: Lataa kaikki ajastetut sovellukset?</string>
@@ -254,7 +258,6 @@
   <string name="resuming_download">Jatketaan latausta</string>
   <string name="finished_download">%s lataus valmis</string>
   <string name="slow">hidas</string>
-  <string name="paused">keskeytetty</string>
   <string name="stopped">pysäytetty</string>
   <string name="starting">aloitetaan</string>
   <string name="download_failed_due_to">Lataus epäonnistui syystä</string>
@@ -299,14 +302,14 @@
   <string name="no_launcher_activity">Laukaisutoimintaa ei löytynyt</string>
   <string name="retrying_registration">Rekisteröintiprosessia suoritetaan loppuun</string>
   <string name="credit_card">Luottokortti</string>
-  <string name="paypal_message">Voit maksaa luottokortilla tai PayPal-tililläsi sopimuksen kanssa. Jos haluat maksaa ilman sopimusta, valitse luottokortti.</string>
+  <string name="paypal_message">Voit maksaa luottokortilla tai PayPal-tililläsi sopimuksen kanssa. Jos haluat maksaa PayPal-tililläsi ilman sopimusta, valitse luottokortti.</string>
   <string name="paidapp_not_found">Virhe sovelluksen latauksessa. Yritä uudelleen tai ota yhteyttä tukeen.</string>
   <string name="get_latest_version">Hanki viimeisin</string>
   <string name="get_latest_version_and_trusted">Hanki viimeisin &amp; luotettu</string>
   <string name="version_info">Versiotiedot</string>
   <string name="payment_method">Maksutapa</string>
   <string name="payment_warning_text">Emme voineet tarkistaa tämän tuotteen hintaa. Hinta voi olla muuttunut. Varmista PayPal-hinnat ennen maksamista.</string>
-  <string name="payment_warning_title">Varoitus</string>
+  <string name="payment_warning_title">Varoitus!</string>
   <string name="buy">Osta</string>
   <string name="applications">Sovellukset</string>
   <string name="comics">Sarjakuvat</string>
@@ -360,4 +363,16 @@
   <string name="warning">Varoitus</string>
   <string name="unknown">Tuntematon</string>
   <string name="error_no_market">Sinulla ei ole Google Playta asennettuna!</string>
+  <string name="crash_notif_ticker_text">Odottamaton virhe, lähetä raportti...</string>
+  <string name="crash_notif_text">Napsauta tästä saadaksesi apua asian korjaamiseksi.</string>
+  <string name="crash_dialog_title">Aptoide on kaatunut</string>
+  <string name="crash_dialog_text">Sovelluksen pakotetussa sulkemisessa tapahtui odottamaton virhe. Auta meitä korjaamaan tämä virhe lähettämällä virhetiedot meille napsauttamalla OK.</string>
+  <string name="crash_dialog_comment_prompt">Voit lisätä halutessasi alle omia kommenttejasi ongelmasta:</string>
+  <string name="crash_dialog_ok_toast">Kiitos!</string>
+  <string name="finished_install">%s on asennettu.</string>
+  <string name="installing">Asennetaan %s...</string>
+  <string name="new_updates">%s uutta päivitystä saatavissa!</string>
+  <string name="one_new_update">%s uusi päivitys saatavissa!</string>
+  <string name="has_updates">%sssa on uusia päivityksiä saatavissa!</string>
+  <string name="powered_by">Toiminnallisuudet tarjoaa</string>
 </resources>

@@ -33,8 +33,6 @@
   <string name="merge_all_stores">دمج المتاجر</string>
   <string name="search_for_stores">ابحث عن متجر</string>
   <string name="download_manager">إدارة التحميل</string>
-  <string name="downloading_apps">تحميل التطبيقات</string>
-  <string name="downloaded_apps">التطبيقات المحملة</string>
   <string name="no_downloads">لا يوجد تحميلات. ابدأ التحميل!</string>
   <string name="not_downloaded_apps">لا يسمح بتحميل التطبيق</string>
   <string name="exit">خروج</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">"استئناف التحميل "</string>
   <string name="finished_download">%s إكتمل تحميله</string>
   <string name="slow">أبطأ</string>
-  <string name="paused">ايقاف مؤقت</string>
   <string name="stopped">ايقاف</string>
   <string name="starting">ابدأ</string>
   <string name="download_failed_due_to">فشل في التحميل نتيجة ل</string>

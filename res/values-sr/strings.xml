@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Spoji sve Stores-e</string>
   <string name="search_for_stores">Trazi Stores-e</string>
   <string name="download_manager">Upravitelj Preuzimanja</string>
-  <string name="downloading_apps">Preuzimanje aplikacija</string>
-  <string name="downloaded_apps">Preuzete aplikacije</string>
   <string name="no_downloads">Nema preuzimanja. Počnite preuzimati!</string>
   <string name="not_downloaded_apps">Nepreuzete aplikacije</string>
   <string name="exit">izlaz</string>
@@ -252,7 +250,6 @@
   <string name="resuming_download">Nastavljanje preuzimanja</string>
   <string name="finished_download">%s završeno preuzimanje</string>
   <string name="slow">sporo</string>
-  <string name="paused">pauzirano</string>
   <string name="stopped">zaustavljeno</string>
   <string name="starting">pokretanje</string>
   <string name="download_failed_due_to">Preuzimanje nije uspjelo zbog</string>

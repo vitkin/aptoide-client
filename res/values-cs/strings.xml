@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Sloučit obchody</string>
   <string name="search_for_stores">Hledat obchody</string>
   <string name="download_manager">Správce stahování</string>
-  <string name="downloading_apps">Stahované aplikace</string>
-  <string name="downloaded_apps">Stažené aplikace</string>
   <string name="no_downloads">Žádná stahování. Začněte stahovat!</string>
   <string name="not_downloaded_apps">Žádné stažené aplikace</string>
   <string name="exit">ukončit</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">Pokračuji ve stahování</string>
   <string name="finished_download">%s ukončilo stahování</string>
   <string name="slow">pomalu</string>
-  <string name="paused">pozastaveno</string>
   <string name="stopped">zastaveno</string>
   <string name="starting">spouštím</string>
   <string name="download_failed_due_to">Stahování se nezdařilo kvůli</string>

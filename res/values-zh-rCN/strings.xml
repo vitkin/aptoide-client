@@ -33,8 +33,6 @@
   <string name="merge_all_stores">合并商店</string>
   <string name="search_for_stores">搜索商店</string>
   <string name="download_manager">下载管理器</string>
-  <string name="downloading_apps">正在下载的应用</string>
-  <string name="downloaded_apps">已下载的应用</string>
   <string name="no_downloads">没有下载。开始下载吧！</string>
   <string name="not_downloaded_apps">没被下载的应用</string>
   <string name="exit">离开</string>
@@ -254,7 +252,6 @@
   <string name="resuming_download">恢复下载</string>
   <string name="finished_download">%s个下载完成</string>
   <string name="slow">慢</string>
-  <string name="paused">已暂停</string>
   <string name="stopped">已停止</string>
   <string name="starting">开始</string>
   <string name="download_failed_due_to">下载失败，因为</string>

@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Unisci Store</string>
   <string name="search_for_stores">Cerca Store</string>
   <string name="download_manager">Gestore Download</string>
-  <string name="downloading_apps">Scaricamento Apps</string>
-  <string name="downloaded_apps">Apps Scaricate</string>
   <string name="no_downloads">Nessun Download. Inizia a scaricare!</string>
   <string name="not_downloaded_apps">Apps non scaricate</string>
   <string name="exit">Uscita</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">Download in ripresa</string>
   <string name="finished_download">%s finito di scaricare</string>
   <string name="slow">lento</string>
-  <string name="paused">in pausa</string>
   <string name="stopped">fermato</string>
   <string name="starting">Iniziato</string>
   <string name="download_failed_due_to">Download fallito a causa di</string>

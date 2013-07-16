@@ -31,8 +31,6 @@
   <string name="downloads">descărcări</string>
   <string name="merge_all_stores">Uneşte toate magazinele</string>
   <string name="search_for_stores">Căutare magazine</string>
-  <string name="downloading_apps">Descărcare aplicaţii</string>
-  <string name="downloaded_apps">Aplicaţii descărcate</string>
   <string name="no_downloads">Nici o descarcare. Incepe descarcarea!</string>
   <string name="not_downloaded_apps">Aplicaţii nedescărcate</string>
   <string name="exit">ieşire</string>
@@ -251,7 +249,6 @@
   <string name="resuming_download">Reluare descărcare</string>
   <string name="finished_download">%s s-a descarcat</string>
   <string name="slow">încet</string>
-  <string name="paused">în pauză</string>
   <string name="stopped">oprit</string>
   <string name="starting">Incepe</string>
   <string name="download_failed_due_to">Descarcare Esuata din cauza</string>

@@ -36,6 +36,7 @@
   <string name="downloaded_apps">अनुप्रयोग डाऊनलोड हो गये</string>
   <string name="no_downloads">कोई डाऊनलोड नहीं। डाऊनलोड शुरू करो!</string>
   <string name="not_downloaded_apps">कोई अनुप्रयोग डाऊनलोड नहीं।</string>
+  <string name="paused">ठहराव</string>
   <string name="exit">निकास</string>
   <string name="install">संस्थापित</string>
   <string name="uninstall">स्थापना रद्द करो</string>
@@ -211,7 +212,6 @@
   <string name="starting_download">डाऊनलोड शुरू हो रहा है</string>
   <string name="resuming_download">"डाऊनलोड फिर से शुरू किया जा रहा है "</string>
   <string name="slow">धीरे</string>
-  <string name="paused">ठहराव</string>
   <string name="stopped">रोक दिया</string>
   <string name="starting">शुरू हो गया</string>
   <string name="download_failed_due_to">इस वजह से डाऊनलोड विफल हो गया</string>

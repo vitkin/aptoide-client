@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Voeg alle voorraden bij elkaar</string>
   <string name="search_for_stores">Zoek voor voorraden</string>
   <string name="download_manager">Download Beheerder</string>
-  <string name="downloading_apps">Apps Downloaden:</string>
-  <string name="downloaded_apps">Gedownloade apps</string>
   <string name="no_downloads">Geen downloads. Begin met downloaden!</string>
   <string name="not_downloaded_apps">Niet gedownloade apps</string>
   <string name="exit">Exit</string>
@@ -254,7 +252,6 @@
   <string name="resuming_download">Download hervatten</string>
   <string name="finished_download">%s is klaar met downloaden</string>
   <string name="slow">langzaam</string>
-  <string name="paused">gepauzeerd</string>
   <string name="stopped">gestopt</string>
   <string name="starting">Begint</string>
   <string name="download_failed_due_to">Download mislukt door</string>

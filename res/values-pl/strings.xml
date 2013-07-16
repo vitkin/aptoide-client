@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Połącz repozytoria</string>
   <string name="search_for_stores">Przeszukaj repozytoria</string>
   <string name="download_manager">Menadżer pobierania</string>
-  <string name="downloading_apps">Pobieranie aplikacji</string>
-  <string name="downloaded_apps">Pobrane aplikacje</string>
   <string name="no_downloads">Nic nie pobrałeś - pobierz coś.</string>
   <string name="not_downloaded_apps">Aplikacje nie pobrane</string>
   <string name="exit">wyjście</string>
@@ -254,7 +252,6 @@
   <string name="resuming_download">Podejmij pobieranie</string>
   <string name="finished_download">%s pobieranie zakończone</string>
   <string name="slow">wolno</string>
-  <string name="paused">pauza</string>
   <string name="stopped">zatrzymane</string>
   <string name="starting">rozpoczęte</string>
   <string name="download_failed_due_to">Pobieranie nieudane z powodu</string>

@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Fusionner tous les dépôts</string>
   <string name="search_for_stores">Chercher des dépôts</string>
   <string name="download_manager">Gestionnaire des téléchargements</string>
-  <string name="downloading_apps">Téléchargement des apps</string>
-  <string name="downloaded_apps">Apps téléchargées</string>
   <string name="no_downloads">Pas de téléchargement. Commencez à télécharger !</string>
   <string name="not_downloaded_apps">Apps non téléchargées</string>
   <string name="exit">Sortie</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">Reprise du téléchargement</string>
   <string name="finished_download">Téléchargement de %s terminé</string>
   <string name="slow">lent</string>
-  <string name="paused">en pause</string>
   <string name="stopped">arrêté</string>
   <string name="starting">démarrage de</string>
   <string name="download_failed_due_to">Échec du téléchargement en raison de</string>

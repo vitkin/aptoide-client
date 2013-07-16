@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Mağazaları birleştir</string>
   <string name="search_for_stores">Mağaza ara</string>
   <string name="download_manager">İndirme yöneticisi</string>
-  <string name="downloading_apps">İndiriliyor:</string>
-  <string name="downloaded_apps">İndirmeler</string>
   <string name="no_downloads">Hiçbir indirme yok. İndirmeye başlayın!</string>
   <string name="not_downloaded_apps">İndirilmemiş uygulamalar</string>
   <string name="exit">çık</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">İndirme duraklatıldı</string>
   <string name="finished_download">%s tamamlanmış indirme</string>
   <string name="slow">yavaş</string>
-  <string name="paused">duraklatılmış</string>
   <string name="stopped">durdurulmuş</string>
   <string name="starting">başlıyor</string>
   <string name="download_failed_due_to">Şu yüzden indirme başarısız oldu</string>

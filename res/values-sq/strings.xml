@@ -33,8 +33,6 @@
   <string name="merge_all_stores">Bashko Dyqanet Aplikacioneve</string>
   <string name="search_for_stores">Kërko për Dyqane Aplikacionesh</string>
   <string name="download_manager">Menaxher Shkarkimesh</string>
-  <string name="downloading_apps">Duke shkarkuar aplikacione</string>
-  <string name="downloaded_apps">Aplikacionet e shkarkuara</string>
   <string name="no_downloads">Nuk ka shkarkime. Fillo shkarkimin!</string>
   <string name="not_downloaded_apps">Aplikacionet e pashkarkuara</string>
   <string name="exit">dil</string>
@@ -260,7 +258,6 @@
   <string name="resuming_download">Duke rifilluar shkarkimin</string>
   <string name="finished_download">%s mbaroi shkarkimin</string>
   <string name="slow">ngadalë</string>
-  <string name="paused">i pushuar</string>
   <string name="stopped">i ndaluar</string>
   <string name="starting">duke filluar</string>
   <string name="download_failed_due_to">Shkarkimi Dështoi për shkak të</string>
