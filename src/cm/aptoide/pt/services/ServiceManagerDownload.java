@@ -105,7 +105,12 @@ public class ServiceManagerDownload extends Service {
     }
 
     @Subscribe public void removeDownload(DownloadRemoveEvent id){
-        BusProvider.getInstance().post(downloads.remove(id.getId()));
+        DownloadInfo info = downloads.remove(id.getId());
+
+        if(info!=null){
+            BusProvider.getInstance().post(info);
+        }
+
         BusProvider.getInstance().post(new DownloadStatusEvent());
     }
 

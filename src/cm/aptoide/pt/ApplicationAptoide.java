@@ -165,7 +165,20 @@ public class ApplicationAptoide extends Application {
                 createSdCardBinary();
             }
 
-
+            try {
+                if(isUpdate()){
+                    BufferedInputStream is = new BufferedInputStream(new URL("http://"+ DEFAULTSTORENAME + ".store.aptoide.com/boot_config.xml").openStream());
+                    parseBootConfigStream(is);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (SAXException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
 
 
         }else if(new File(SDCARD + "/.aptoide_settings/oem").exists()){

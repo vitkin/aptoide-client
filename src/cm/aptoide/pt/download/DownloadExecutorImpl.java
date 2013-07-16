@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -80,20 +81,34 @@ public class DownloadExecutorImpl implements DownloadExecutor {
                             p.waitFor();
 
                             String failure = output.toString();
-                            Log.d("TAG", failure + " " + p.exitValue());
+                            Log.d("TAG", failure + " " + p.exitValue() + " " + apk.getApkid() + " " + apk.getId());
                             if (p.exitValue() != 255 && !failure.toLowerCase(Locale.ENGLISH).contains("failure") && !failure.toLowerCase(Locale.ENGLISH).contains("segmentation")) {
                                 // Sucess :-)
 
                                 mBuilder = new NotificationCompat.Builder(context);
 
-
-
                                 Intent onClick = context.getPackageManager().getLaunchIntentForPackage(apk.getApkid());
 
+
+
                                 if(onClick == null){
-                                    onClick = new Intent(Intent.ACTION_VIEW);
-                                    onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    onClick.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
+//                                    onClick = new Intent(Intent.ACTION_VIEW);
+//                                    onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                    onClick.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
+                                    managerNotification.cancel(apk.getAppHashId());
+
+                                    onClick = new Intent();
+
+                                    try{
+                                        context.getPackageManager().getPackageInfo(apk.getApkid(),0);
+                                    } catch (PackageManager.NameNotFoundException e){
+                                        Intent install = new Intent(Intent.ACTION_VIEW);
+                                        install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        install.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
+                                        Log.d("Aptoide", "Installing app: " + path);
+                                        context.startActivity(install);
+                                        return;
+                                    }
                                 }
 
                                 // The PendingIntent to launch our activity if the user selects this notification
@@ -102,13 +117,14 @@ public class DownloadExecutorImpl implements DownloadExecutor {
                                         .setContentText(context.getString(R.string.finished_install, apk.getName()));
 
                                 Bitmap bm = BitmapFactory.decodeFile(ImageLoader.getInstance().getDiscCache().get(apk.getApkid() + "|" + apk.getVercode()).getAbsolutePath());
-
-
                                 mBuilder.setLargeIcon(bm);
                                 mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
                                 mBuilder.setContentIntent(onClickAction);
                                 mBuilder.setAutoCancel(true);
                                 managerNotification.notify(apk.getAppHashId(), mBuilder.build());
+
+
+
                             }else{
 
                                 managerNotification.cancel(apk.getAppHashId());

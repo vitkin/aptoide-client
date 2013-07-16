@@ -174,7 +174,9 @@ public class DownloadInfo implements Runnable{
             e.printStackTrace();
         }
 
-        BusProvider.getInstance().post(new DownloadRemoveEvent(getId()));
+        BusProvider.getInstance().post(DownloadInfo.this);
+        BusProvider.getInstance().post(new DownloadStatusEvent());
+
 
         threads.clear();
         mDownloadedSize = 0;
