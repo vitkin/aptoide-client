@@ -1852,7 +1852,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 }
 
                 if(ApplicationAptoide.isRestartLauncher() && !ApplicationAptoide.BRAND.equals("brand_aptoide")){
-                    
+
                 	View simpleLayoutView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
                 	Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleLayoutView);
                 	final AlertDialog restartLauncherDialog = dialogBuilder.create();
@@ -1861,7 +1861,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 	TextView message = (TextView) simpleLayoutView.findViewById(R.id.dialog_message);
         			message.setText(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
                 	restartLauncherDialog.setCancelable(false);
-                	
+
                 	restartLauncherDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
         				@Override
         				public void onClick(DialogInterface arg0, int arg1) {
@@ -1870,7 +1870,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
         			    }
         			});
                 	restartLauncherDialog.show();
-                	
+
 //                	AlertDialog ad = new AlertDialog.Builder(this).create();
 //                    ad.setCancelable(false);
 //                    ad.setMessage(getString(R.string.restart_launcher, ApplicationAptoide.MARKETNAME));
@@ -3041,15 +3041,15 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		updateSelfDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-//				new DownloadSelfUpdate().execute();
+				new DownloadSelfUpdate().execute();
 
-                ViewApk apk = new ViewApk();
-                apk.setName("Aptoide");
-                apk.setVername(updateParams.get("versionCode"));
-                apk.setMd5(updateParams.get("md5"));
-                apk.setPath(updateParams.get("uri"));
-                Toast.makeText(MainActivity.this, "Downlading Self-Update", Toast.LENGTH_LONG).show();
-                serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
+//                ViewApk apk = new ViewApk();
+//                apk.setName("Aptoide");
+//                apk.setVername(updateParams.get("versionCode"));
+//                apk.setMd5(updateParams.get("md5"));
+//                apk.setPath(updateParams.get("uri"));
+//                Toast.makeText(MainActivity.this, "Downlading Self-Update", Toast.LENGTH_LONG).show();
+//                serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
 
 		    }
 		});
