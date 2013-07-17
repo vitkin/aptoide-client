@@ -213,7 +213,8 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
                             apk.setPatchObbFileName(schDown.getPatchObbFilename());
 
                             serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
-
+                            Toast toast = Toast.makeText(ScheduledDownloads.this, R.string.starting_download, Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     }
 
@@ -253,6 +254,8 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
                         apk.setPatchObbFileName(schDown.getPatchObbFilename());
 
                         serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
+                        Toast toast = Toast.makeText(ScheduledDownloads.this, R.string.starting_download, Toast.LENGTH_SHORT);
+                        toast.show();
 					}
 					finish();
 					return;

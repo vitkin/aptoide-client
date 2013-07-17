@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.services.ServiceManagerDownload;
 import cm.aptoide.pt.views.ViewApk;
@@ -181,7 +182,8 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
                                 apk.setPatchObbMd5(app.get("patch_md5sum"));
 
 								serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk),apk);
-
+								Toast toast = Toast.makeText(IntentReceiver.this, getString(R.string.starting_download), Toast.LENGTH_SHORT);
+	                            toast.show();
 							}
 						});
 						installAppDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), neutralListener);

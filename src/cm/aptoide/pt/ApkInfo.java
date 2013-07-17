@@ -1052,6 +1052,8 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
 
 
                 serviceDownloadManager.startDownload(download, viewApk);
+                Toast toast = Toast.makeText(context, context.getString(R.string.starting_download), Toast.LENGTH_SHORT);
+                toast.show();
                 findViewById(R.id.btinstall).setOnClickListener(installListener);
                 handleUpdate(download);
 

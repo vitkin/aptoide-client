@@ -1135,6 +1135,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                         @Override
                         public void run() {
                             serviceDownloadManager.startDownload(serviceDownloadManager.getDownload(apk), apk);
+                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.starting_download), Toast.LENGTH_SHORT);
+							toast.show();
                         }
                     });
 				}
