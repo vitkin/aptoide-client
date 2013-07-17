@@ -337,6 +337,7 @@ public class ApplicationAptoide extends Application {
             if (isUpdate()) {
                 ManagerPreferences.removePreviousShortcuts(this, false);
                 ManagerPreferences.removePreviousShortcuts(this, true);
+                ManagerPreferences.removePreviousShortcuts2(getContext());
                 ManagerPreferences.setAptoideVersionName(this, this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
             }
         } catch (PackageManager.NameNotFoundException e) {

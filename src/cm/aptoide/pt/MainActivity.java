@@ -92,7 +92,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 	private String LATEST_VERSION_CODE_URI =
 			(ApplicationAptoide.PARTNERID==null) ?
 			"http://imgs.aptoide.com/latest_version.xml":
-				"http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/latest_version.xml";
+				"http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/latest_version_"+ ApplicationAptoide.DEFAULTSTORENAME +".xml";
 	private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath()+ "/.aptoide/aptoideUpdate.apk";
 
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();

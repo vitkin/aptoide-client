@@ -164,9 +164,19 @@ public class WebserviceGetApkInfo {
 
     }
 
+    public String getName() throws JSONException {
+        JSONObject malwareResponse = response.getJSONObject("meta");
+        return malwareResponse.getString("title");
+    }
+
+    public String getDescription() throws JSONException {
+        JSONObject malwareResponse = response.getJSONObject("meta");
+        return malwareResponse.getString("description");
+    }
+
     public ArrayList<ApkPermission> getApkPermissions() throws JSONException {
 
-        JSONArray permissionArray = response.getJSONArray("apk_permissions");
+        JSONArray permissionArray = response.getJSONArray("apkpermissions");
 
         ArrayList<ApkPermission> list = new ArrayList<ApkPermission>();
         for(int i = 0; i!= permissionArray.length(); i++){

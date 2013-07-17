@@ -39,7 +39,7 @@ public class DownloadFile {
 
         File dir = file.getParentFile();
         if ((dir != null) && (!dir.isDirectory())) {
-            dir.mkdir();
+            dir.mkdirs();
         }
 
         this.mFile = new RandomAccessFile(mDestination, "rw");

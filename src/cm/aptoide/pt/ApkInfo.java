@@ -348,7 +348,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 }
 
                 Log.d("Aptoide-ApkInfo", "2");
-                if(viewApk.getComments().size()>0){
+                if(viewApk.getComments() != null && viewApk.getComments().size()>0){
                     setComments(viewApk.getComments());
                     loading.setVisibility(View.GONE);
                 }
@@ -1411,6 +1411,28 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             unstrustedPayment = false;
+
+            try{
+                String name = webservice.getName();
+                viewApk.setName(name);
+                ((TextView)findViewById(R.id.app_name)).setText(name);
+                db.updateName(name, viewApk.getId(), category);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try{
+                String description = webservice.getDescription();
+                ((TextView)findViewById(R.id.descript)).setText(webservice.getDescription());
+
+                ContentValues values = new ContentValues();
+                values.put("apkid", viewApk.getApkid());
+                values.put("comment", description);
+                context.getContentResolver().insert(ExtrasContentProvider.CONTENT_URI, values);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
             try {
                 if(!getIntent().hasExtra("installed"))
                     checkPayment(webservice.getPayment());

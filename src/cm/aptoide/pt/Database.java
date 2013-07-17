@@ -193,6 +193,40 @@ public class Database {
 
     }
 
+    public void updateName(String name, long id, Category category) {
+
+        String table = "";
+
+        ContentValues values = new ContentValues();
+
+        values.put(DbStructure.COLUMN_NAME, name);
+
+        switch (category) {
+            case TOP:
+                table = DbStructure.TABLE_TOP_APK;
+                break;
+            case LATEST:
+                table = DbStructure.TABLE_LATEST_APK;
+                break;
+            case TOPFEATURED:
+                table = DbStructure.TABLE_FEATURED_TOP_APK;
+                break;
+            case EDITORSCHOICE:
+                table = DbStructure.TABLE_FEATURED_EDITORSCHOICE_APK;
+                break;
+            case INFOXML:
+                table = DbStructure.TABLE_APK;
+                break;
+            case ITEMBASED:
+            case USERBASED:
+                table = DbStructure.TABLE_ITEMBASED_APK;
+                break;
+        }
+
+        database.update(table, values, "_id=?", new String[]{id+""});
+
+    }
+
     private static class SingletonHolder {
 		public static final Database INSTANCE = new Database();
 	}
