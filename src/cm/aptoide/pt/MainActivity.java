@@ -16,6 +16,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.*;
@@ -27,6 +28,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.util.Xml;
 import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -208,6 +210,14 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		});
 	}
 
+    public static int getPixels(int dipValue){
+        Resources r = mContext.getResources();
+        int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, 
+        r.getDisplayMetrics());
+        Log.d("getPixels", ""+px);
+        return px;
+    }
+    
 	private void loadRecommended() {
 
 
@@ -313,7 +323,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 								txtSamItem.setTag(valuesRecommended.get(i).get("_id"));
 								txtSamItem.setLayoutParams(new LinearLayout.LayoutParams(
 												LinearLayout.LayoutParams.MATCH_PARENT,
-												100, 1));
+												getPixels(80), 1));
 								// txtSamItem.setOnClickListener(featuredListener);
 								txtSamItem.setOnClickListener(new OnClickListener() {
 
@@ -336,7 +346,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 									llAlso = new LinearLayout(MainActivity.this);
 									llAlso.setLayoutParams(new LinearLayout.LayoutParams(
 											LinearLayout.LayoutParams.MATCH_PARENT,
-											100));
+											getPixels(80)));
 									llAlso.setOrientation(LinearLayout.HORIZONTAL);
 									llAlso.addView(txtSamItem);
 								} else {
@@ -568,7 +578,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 					txtSamItem.setPadding(10, 0, 0, 0);
 					txtSamItem.setTag(values.get(i).get("id"));
 					txtSamItem.setLayoutParams(new LinearLayout.LayoutParams(
-							LinearLayout.LayoutParams.MATCH_PARENT, 100, 1));
+							LinearLayout.LayoutParams.MATCH_PARENT, getPixels(80), 1));
 					// txtSamItem.setOnClickListener(featuredListener);
 					txtSamItem.setOnClickListener(new OnClickListener() {
 
@@ -590,7 +600,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 						llAlso = new LinearLayout(MainActivity.this);
 						llAlso.setLayoutParams(new LinearLayout.LayoutParams(
-								LinearLayout.LayoutParams.MATCH_PARENT, 100));
+								LinearLayout.LayoutParams.MATCH_PARENT, getPixels(80)));
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
 						llAlso.addView(txtSamItem);
 					} else {

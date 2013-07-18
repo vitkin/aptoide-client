@@ -30,14 +30,29 @@
             android:clickable="true"
             android:orientation="vertical" >
 
-            <ImageView
-                android:id="@+id/central"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="0.5dp"
-                android:adjustViewBounds="true"
-                android:clickable="true" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <ImageView
+                    android:id="@+id/central"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="0.5dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:clickable="true" />
+
+                <ImageView
+                    android:id="@+id/bottomcenter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="0.5dp"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:clickable="true" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -79,16 +94,6 @@
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:clickable="true" />
-
-                <ImageView
-                    android:id="@+id/bottomcenter"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="0.5dp"
-                    android:layout_weight="1"
-                    android:adjustViewBounds="true"
-                    android:clickable="true"
-                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/bottomright"
