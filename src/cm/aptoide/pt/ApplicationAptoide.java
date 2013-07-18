@@ -144,6 +144,8 @@ public class ApplicationAptoide extends Application {
 
 
 
+
+
         sPref = getSharedPreferences("settings", MODE_PRIVATE);
         if(sPref.contains("PARTNERID") && sPref.getString("PARTNERID", null) != null){
 
@@ -171,17 +173,17 @@ public class ApplicationAptoide extends Application {
                     parseBootConfigStream(is);
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } catch (ParserConfigurationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } catch (SAXException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
 
 
-        }else if(new File(SDCARD + "/.aptoide_settings/oem").exists()){
+        }else if(new File(SDCARD + "/.aptoide_settings/oem").exists() && !getPackageName().equals("cm.aptoide.pt")){
 
             try {
                 Toast.makeText(this, "Regenerating settings from SDCard.", Toast.LENGTH_LONG).show();
@@ -236,6 +238,19 @@ public class ApplicationAptoide extends Application {
                 e.printStackTrace();
             }
 
+        }
+
+        super.onCreate();
+
+        try {
+            if (isUpdate()) {
+                ManagerPreferences.removePreviousShortcuts2(getContext());
+                ManagerPreferences.removePreviousShortcuts(this, false);
+                ManagerPreferences.removePreviousShortcuts(this, true);
+                ManagerPreferences.setAptoideVersionName(this, this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
 
 
@@ -324,25 +339,16 @@ public class ApplicationAptoide extends Application {
 			ApplicationAptoide.MARKETNAME = getString(R.string.app_name_peoplenet);
 			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("MARKETNAME", ApplicationAptoide.MARKETNAME).commit();
 		}
-		super.onCreate();
-
-        try {
-            Log.d("TAG","version name" + this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
 
-        try {
-            if (isUpdate()) {
-                ManagerPreferences.removePreviousShortcuts(this, false);
-                ManagerPreferences.removePreviousShortcuts(this, true);
-                ManagerPreferences.removePreviousShortcuts2(getContext());
-                ManagerPreferences.setAptoideVersionName(this, this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.d("TAG","version name" + this.getPackageManager().getPackageInfo(this.getPackageName(),0).versionName);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//        }
+
+
+
 
         try{
         	managerPreferences = new ManagerPreferences(getApplicationContext());

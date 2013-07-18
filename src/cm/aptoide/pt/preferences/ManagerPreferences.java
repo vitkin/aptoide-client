@@ -66,8 +66,7 @@ public class ManagerPreferences{
 
     public static void setAptoideVersionName(Context context, String aptoideVersionName){
 
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString("versionName", aptoideVersionName);
-        PreferenceManager.getDefaultSharedPreferences(context).edit().commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString("versionName", aptoideVersionName).commit();
 
     }
 
